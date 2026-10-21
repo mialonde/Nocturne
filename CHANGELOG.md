@@ -17,6 +17,11 @@ and the project uses [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Four ready experiences, optional audio-only rendering, screen-awake preference and full local backups with preview before restore.
+- Personal looped audio stored in IndexedDB, with independent level and stereo position; full backups include its bytes.
+- Seeded ambience-level variation and per-passage automation for light intensity, bloom, ambience and camera drift. Session ambience selections now resolve actual tracks and restore the previous mix when stopped.
+- Recorded-guidance infrastructure for sleep, focus and meditation, replacing system speech synthesis. Texts and processing scripts are included; narration assets are pending production and missing profiles stay disabled.
+
 - **Recorded ambience.** Six ambience tracks now play open-licensed field
   recordings (rain, distant thunder, wind, ocean, forest, fireplace). The
   procedural bed keeps playing until the recording has been downloaded, and

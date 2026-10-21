@@ -188,6 +188,11 @@ The recorder handles unsupported codecs, empty takes, encoder errors, visibility
 
 ## Known limits
 
+- Ready experiences are in Sound; audio-only mode and full backup are in Settings. Backups include saved mixes, sessions, preferences and the optional personal audio file. Personal audio is stored locally in IndexedDB, with a 20 MB / 10 minute limit per loop.
+- Living soundscape varies the levels of selected ambience tracks using a repeatable seed. It does not make procedural source audio bit-for-bit deterministic.
+- Passage automation targets visual intensity, bloom, ambience level and camera drift without rewriting saved visual preferences.
+- Turkish guidance has separate sleep, focus and meditation profiles. Its nine speech recordings are not bundled yet; unavailable profiles stay disabled. See [`docs/guidance.md`](docs/guidance.md) for scripts and the import pipeline. System speech synthesis is not used.
+
 - Production builds precache the app shell and optional interface modules after the offline worker finishes installing. Recorded ambience becomes available offline after it has been played online. New releases activate after existing app tabs close.
 - Audio-only WAV export converts the browser's compressed recording to 16-bit PCM; it is not a lossless capture of the original signal.
 
