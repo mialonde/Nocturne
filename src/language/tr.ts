@@ -235,7 +235,7 @@ export const tr: Messages = {
   'settings.credits.title': 'Ses kredileri',
   'settings.credits.eyebrow': 'Kayıt edilmiş ambiyans',
   'settings.credits.copy':
-    'Bu izler Wikimedia Commons’tan indirilen açık lisanslı saha kayıtlarını kullanır. Geri kalan her şey tarayıcıda canlı olarak üretilir.',
+    'Bu izler açık lisanslı saha kayıtlarını kullanır. Geri kalan her şey tarayıcıda canlı olarak üretilir.',
   'settings.credits.none':
     'Tüm ambiyanslar tarayıcıda üretilir. Henüz kayıt edilmiş dosya kullanılmıyor.',
   'settings.presets.title': 'Deneyim önayarları',

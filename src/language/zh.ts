@@ -235,7 +235,7 @@ export const zh: Messages = {
   'settings.credits.title': '音频来源',
   'settings.credits.eyebrow': '实录环境声',
   'settings.credits.copy':
-    '这些音轨使用从 Wikimedia Commons 下载的开放许可现场录音。其余声音全部在浏览器中实时生成。',
+    '这些音轨使用开放许可的现场录音。其余声音全部在浏览器中实时生成。',
   'settings.credits.none':
     '所有环境声都在浏览器中生成，尚未使用任何录音文件。',
   'settings.presets.title': '体验预设',

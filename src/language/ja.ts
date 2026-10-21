@@ -235,7 +235,7 @@ export const ja: Messages = {
   'settings.credits.title': '音声クレジット',
   'settings.credits.eyebrow': '録音された環境音',
   'settings.credits.copy':
-    'これらのトラックは、Wikimedia Commons からダウンロードしたオープンライセンスのフィールド録音を使用しています。それ以外の音はすべてブラウザ内で生成されます。',
+    'これらのトラックはオープンライセンスのフィールド録音を使用します。それ以外の音はすべてブラウザ内で生成されます。',
   'settings.credits.none':
     'すべての環境音はブラウザ内で生成されています。録音ファイルはまだ使用していません。',
   'settings.presets.title': '体験プリセット',
