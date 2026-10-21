@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T06:38:00.380Z",
+  "generatedAt": "2026-10-21T06:44:00.716Z",
   "providers": [
     "Wikimedia Commons",
     "archive.org"
@@ -8,7 +8,7 @@
     {
       "id": "rain",
       "provider": "commons",
-      "rawFile": "assets\\ambient-raw\\rain.wav",
+      "rawFile": "assets/ambient-raw/rain.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "title": "Light Rain Distant Thunder July 5th 2016",
@@ -25,7 +25,7 @@
     {
       "id": "distant_thunder",
       "provider": "commons",
-      "rawFile": "assets\\ambient-raw\\rain.wav",
+      "rawFile": "assets/ambient-raw/rain.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "title": "Light Rain Distant Thunder July 5th 2016",
@@ -42,7 +42,7 @@
     {
       "id": "wind",
       "provider": "commons",
-      "rawFile": "assets\\ambient-raw\\wind.ogg",
+      "rawFile": "assets/ambient-raw/wind.ogg",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
       "title": "Howling wind",
@@ -59,7 +59,7 @@
     {
       "id": "ocean",
       "provider": "commons",
-      "rawFile": "assets\\ambient-raw\\ocean.ogg",
+      "rawFile": "assets/ambient-raw/ocean.ogg",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/6/64/Ocean_Waves_on_a_Tropical_Beach.ogg",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Ocean_Waves_on_a_Tropical_Beach.ogg",
       "title": "Ocean Waves on a Tropical Beach",
@@ -76,7 +76,7 @@
     {
       "id": "forest",
       "provider": "commons",
-      "rawFile": "assets\\ambient-raw\\forest.wav",
+      "rawFile": "assets/ambient-raw/forest.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/9/97/Birds_on_Vieux_Limoilou%2C_Qu%C3%A9bec_ville.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Birds_on_Vieux_Limoilou,_Qu%C3%A9bec_ville.wav",
       "title": "Birds on Vieux Limoilou, Québec ville",
@@ -93,7 +93,7 @@
     {
       "id": "fireplace",
       "provider": "archive",
-      "rawFile": "assets\\ambient-raw\\fireplace.mp3",
+      "rawFile": "assets/ambient-raw/fireplace.mp3",
       "rawUrl": "https://archive.org/download/aporee_43670_49721/smallfireplace.mp3",
       "descriptionUrl": "https://archive.org/details/aporee_43670_49721",
       "title": "Nolenai, Lithuania, little bonfire",

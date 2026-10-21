@@ -114,7 +114,7 @@ async function main() {
       throw new Error(`No lock entry for "${source.id}". Run fetch-commons-samples.mjs first.`)
     }
 
-    const rawPath = join(root, record.rawFile)
+    const rawPath = join(root, record.rawFile.split('\\').join('/'))
     const crossfade = Math.min(source.loop?.crossfade ?? 2.5, source.trim.duration / 3)
     const bodyLength = source.trim.duration - crossfade
     const workFile = join(tempDir, `${source.id}.wav`)
@@ -244,18 +244,22 @@ async function main() {
 }
 
 function licenceNotice(id, record, source) {
+  const origin =
+    record.provider === 'archive'
+      ? 'downloaded from archive.org'
+      : 'downloaded from Wikimedia Commons'
   return [
     `# ${id}`,
     '',
     `- **Recording:** ${record.title}`,
     `- **Author:** ${record.author}`,
     `- **Licence:** ${record.license}`,
-    `- **Licence text:** ${record.licenseUrl || 'https://creativecommons.org/publicdomain/zero/1.0/'}`,
+    `- **Licence text:** ${record.licenseUrl}`,
     `- **Source:** ${record.descriptionUrl}`,
     `- **Original file:** ${record.rawFile} (sha1 ${record.sha1})`,
     `- **Processing:** trimmed at ${source.trim.start}s for ${source.trim.duration}s, ${source.loop?.crossfade ?? 2.5}s equal-power loop crossfade, normalised to ${source.targetLufs} LUFS, ${source.channels ?? 'stereo'} channel layout.`,
     '',
-    'The recording was downloaded from Wikimedia Commons and processed for this project.',
+    `The recording was ${origin} and processed for this project.`,
     'No ownership of the original recording is claimed.',
     '',
   ].join('\n')
@@ -305,18 +309,18 @@ function renderNotices(entries) {
   return `# Third party notices
 
 NOCTURNE ships a small number of recorded ambience files. Every file is
-released under a licence that allows redistribution inside an application.
-The full text of each licence is stored next to the recording in
-\`public/licenses/ambient/\`.
+released under a licence that allows redistribution inside an application:
+CC0 1.0 or the Public Domain Mark. No ownership of the original recordings
+is claimed. The per-track notes, including the checksum of every source file,
+are stored in \`public/licenses/ambient/\`.
 
 | Track | Recording | Author | Licence | Link |
 | --- | --- | --- | --- | --- |
 ${rows}
 
-The recordings were downloaded from Wikimedia Commons and processed for this
-project: trimmed, folded into a seamless loop with an equal-power crossfade
-and normalised to a common loudness. No ownership of the original recordings
-is claimed.
+The recordings were downloaded from Wikimedia Commons and archive.org and
+processed for this project: trimmed, folded into a seamless loop with an
+equal-power crossfade and normalised to a common loudness.
 `
 }
 

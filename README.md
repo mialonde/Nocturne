@@ -174,6 +174,9 @@ The recorder handles unsupported codecs, empty takes, encoder errors, visibility
 | `src/three/` | Procedural WebGL environment, shaders, adaptive quality and Cosmos layer. |
 | `src/ui/` | Top bar, panels, session designer, recording HUD, simulator overlay and shared controls. |
 | `src/styles/` | Design tokens and responsive layout for desktop and mobile. |
+| `public/audio/ambient/` | The processed ambience recordings, in Ogg Vorbis and MP3. |
+| `public/licenses/ambient/` | Per-track licence notes for those recordings. |
+| `scripts/` | The sample import pipeline: download, licence lock file, processing. |
 
 ## Privacy and persistence
 
@@ -181,6 +184,7 @@ The recorder handles unsupported codecs, empty takes, encoder errors, visibility
 - Binaural playback is intentionally not restored as active on reload; the volume preference is kept, but the tone must be selected again.
 - No microphone signal is written to a recording or sent anywhere. Recordings contain only the canvas and the application's master audio.
 - There are no remote services, API keys or analytics requests in the application.
+- The recorded ambience files ship with the application. They are fetched from the same origin as the app itself, only when a track is used for the first time.
 
 ## Known limits
 
@@ -188,6 +192,7 @@ The recorder handles unsupported codecs, empty takes, encoder errors, visibility
 - Native output is WebM (VP9/VP8 + Opus where available). MP4 requires a separate conversion.
 - 60 fps capture depends on the GPU, display and browser encoder; 30 fps is the safer default.
 - Mobile browsers and battery-saver modes may suspend WebGL, audio or capture when the tab is hidden.
+- A recorded ambience file is downloaded the first time its track is used. Until it arrives, the procedural version of that track plays.
 - NOCTURNE is an atmosphere and attention space, not a medical device or treatment.
 
 ## License

@@ -11,6 +11,17 @@ import {
 const REDISTRIBUTABLE_LICENCE = /cc0|cc-zero|public ?domain|publicdomain|no restrictions/i
 
 describe('Ambience sample manifest', () => {
+  it('ships the recorded ambience tracks', () => {
+    const ids = Object.keys(AMBIENCE_SAMPLES)
+    expect(ids).toContain('rain')
+    expect(ids).toContain('wind')
+    expect(ids).toContain('ocean')
+    expect(ids).toContain('forest')
+    expect(ids).toContain('distant_thunder')
+    expect(ids).toContain('fireplace')
+    expect(AMBIENCE_SAMPLE_CREDITS.length).toBe(ids.length)
+  })
+
   it('only references sounds that exist in the ambience library', () => {
     for (const id of Object.keys(AMBIENCE_SAMPLES)) {
       expect(id in AMBIENCE_SOUNDS).toBe(true)

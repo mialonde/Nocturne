@@ -174,7 +174,7 @@ async function downloadOnce(url, rawPath, expectedSha1, downloaded) {
 }
 
 function relative(path) {
-  return path.replace(`${root}\\`, '').replace(`${root}/`, '')
+  return path.replace(`${root}\\`, '').replace(`${root}/`, '').split('\\').join('/')
 }
 
 /**
