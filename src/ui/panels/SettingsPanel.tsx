@@ -1,5 +1,6 @@
 import { EyeOff, Globe, Keyboard, MonitorUp, RotateCcw, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState } from 'react'
+import { getAmbienceSampleCreditRows } from '../../config/ambienceSamples'
 import { LANGUAGE_OPTIONS, type LanguageCode } from '../../language/types'
 import { useTranslation } from '../../language/useTranslation'
 import { useNocturneRuntime } from '../../runtime/NocturneRuntime'
@@ -37,6 +38,7 @@ export function SettingsPanel() {
   const sessionActive = useNocturneStore((state) => state.sessionPlayback.status !== 'idle')
   const [confirmingReset, setConfirmingReset] = useState(false)
   const shortcutLabel = SHORTCUT_OPTIONS.find((option) => option.value === shortcut)?.label ?? 'F'
+  const credits = getAmbienceSampleCreditRows()
 
   const reset = () => {
     if (sessionActive) runtime.stopSession()
@@ -198,6 +200,34 @@ export function SettingsPanel() {
             The microphone is never captured. Recording mixes only the rendered canvas and the
             application's stereo master bus.
           </p>
+        </div>
+      </PanelSection>
+
+      <PanelSection title="Audio credits" eyebrow="Recorded ambience">
+        <div className="credits-list">
+          <p className="credits-intro">
+            {credits.length > 0 ? t('settings.credits.copy') : t('settings.credits.none')}
+          </p>
+          {credits.length > 0 ? (
+            <ul>
+              {credits.map((row) => (
+                <li key={row.id}>
+                  <span className="credits-track">{row.name}</span>
+                  <span className="credits-source">
+                    {row.title} — {row.author}
+                  </span>
+                  <a
+                    className="credits-license"
+                    href={row.licenseUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {row.license}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </PanelSection>
 

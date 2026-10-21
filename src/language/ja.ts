@@ -230,6 +230,12 @@ export const ja: Messages = {
   'settings.language.title': '言語',
   'settings.language.eyebrow': 'インターフェース言語',
   'settings.language.select': '言語',
+  'settings.credits.title': '音声クレジット',
+  'settings.credits.eyebrow': '録音された環境音',
+  'settings.credits.copy':
+    'これらのトラックは、Wikimedia Commons からダウンロードしたオープンライセンスのフィールド録音を使用しています。それ以外の音はすべてブラウザ内で生成されます。',
+  'settings.credits.none':
+    'すべての環境音はブラウザ内で生成されています。録音ファイルはまだ使用していません。',
   'settings.presets.title': '体験プリセット',
   'settings.presets.eyebrow': 'ワンクリックで初期状態へ（データ保持）',
   'settings.presets.copy':

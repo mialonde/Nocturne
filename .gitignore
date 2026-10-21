@@ -1,0 +1,12 @@
+node_modules/
+dist/
+
+# Raw ambience downloads and ffmpeg work files. The processed files in
+# public/audio/ambient and the manifest in src/config/ambienceSamples.generated.ts
+# are committed; the originals are not.
+assets/
+
+# Local environment files
+.env
+.env.local
+.DS_Store

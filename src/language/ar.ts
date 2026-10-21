@@ -230,6 +230,12 @@ export const ar: Messages = {
   'settings.language.title': 'اللغة',
   'settings.language.eyebrow': 'لغة الواجهة',
   'settings.language.select': 'اللغة',
+  'settings.credits.title': 'اعتماد الأصوات',
+  'settings.credits.eyebrow': 'أجواء مسجّلة',
+  'settings.credits.copy':
+    'تستخدم هذه المقاطع تسجيلات ميدانية برخصة مفتوحة تم تنزيلها من ويكيميديا كومنز. أما كل ما عدا ذلك فيُولَّد داخل المتصفح.',
+  'settings.credits.none':
+    'كل الأجواء تُولَّد داخل المتصفح. لا توجد ملفات مسجّلة بعد.',
   'settings.presets.title': 'إعدادات الجلسة المسبقة',
   'settings.presets.eyebrow': 'بنقرة واحدة، دون فقدان البيانات',
   'settings.presets.copy':

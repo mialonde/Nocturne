@@ -230,6 +230,12 @@ export const zh: Messages = {
   'settings.language.title': '语言',
   'settings.language.eyebrow': '界面显示语言',
   'settings.language.select': '语言',
+  'settings.credits.title': '音频来源',
+  'settings.credits.eyebrow': '实录环境声',
+  'settings.credits.copy':
+    '这些音轨使用从 Wikimedia Commons 下载的开放许可现场录音。其余声音全部在浏览器中实时生成。',
+  'settings.credits.none':
+    '所有环境声都在浏览器中生成，尚未使用任何录音文件。',
   'settings.presets.title': '体验预设',
   'settings.presets.eyebrow': '一键重置，保留个人数据',
   'settings.presets.copy':

@@ -1,4 +1,5 @@
 import type { AmbienceSoundId } from '../config/ambience'
+import { AMBIENCE_SAMPLES, type AmbienceSampleEntry } from '../config/ambienceSamples'
 import {
   clamp,
   createBrownNoiseBuffer,
@@ -7,10 +8,21 @@ import {
   createWhiteNoiseBuffer,
   safeSetTarget,
 } from './audioUtils'
+import { SampleLibrary } from './SampleLibrary'
+
+/** Seconds used to crossfade a recorded sample over the procedural bed. */
+const SAMPLE_CROSSFADE_SECONDS = 2.2
 
 interface SoundVoice {
   id: AmbienceSoundId
+  /** Track gain, applied to the whole voice. */
   gainNode: GainNode
+  /** Gain of the procedural layer, faded out when a recording takes over. */
+  layerGain: GainNode
+  /** Releases the procedural nodes once the recording has faded in. */
+  stopProcedural: () => void
+  /** Releases the recorded sample, when one was attached. */
+  stopSample: (() => void) | null
   stop: () => void
 }
 
@@ -27,6 +39,9 @@ export class AmbienceLibraryEngine {
   private muted = false
   private disposed = false
 
+  /** Recorded ambience files, decoded on demand. */
+  private readonly samples: SampleLibrary
+
   // Cached shared audio buffers for efficiency
   private pinkBuffer: AudioBuffer | null = null
   private whiteBuffer: AudioBuffer | null = null
@@ -34,6 +49,7 @@ export class AmbienceLibraryEngine {
 
   constructor(context: AudioContext, destination: AudioNode) {
     this.context = context
+    this.samples = new SampleLibrary(context)
 
     this.outputNode = context.createGain()
     this.outputNode.gain.value = 1
@@ -103,6 +119,7 @@ export class AmbienceLibraryEngine {
           const newVoice = this.createSoundVoice(id)
           if (newVoice) {
             this.activeVoices.set(id, newVoice)
+            this.samples.pin(id, true)
             // Ramp up from 0
             newVoice.gainNode.gain.setValueAtTime(0.0001, now)
             safeSetTarget(newVoice.gainNode.gain, vol, now, rampSeconds)
@@ -121,30 +138,49 @@ export class AmbienceLibraryEngine {
           if (currentTarget <= 0.001) {
             voice.stop()
             this.activeVoices.delete(id)
+            this.samples.pin(id, false)
           }
         }, (rampSeconds + 0.1) * 1000)
       }
     }
   }
 
+  /**
+   * Builds one ambience track. The procedural bed starts immediately so a
+   * track never opens in silence, then a recorded sample crossfades over it
+   * once the file has been downloaded and decoded.
+   */
   private createSoundVoice(id: AmbienceSoundId): SoundVoice | null {
     const ctx = this.context
-    const gainNode = ctx.createGain()
-    gainNode.gain.value = 0.0001
-    gainNode.connect(this.outputNode)
+
+    // The voice gain is the public handle used by setTrackVolumes. It feeds
+    // the shared output and the reverb send.
+    const voiceGain = ctx.createGain()
+    voiceGain.gain.value = 0.0001
+    voiceGain.connect(this.outputNode)
 
     const voiceReverbGain = ctx.createGain()
     voiceReverbGain.gain.value = 0.18
-    gainNode.connect(voiceReverbGain)
+    voiceGain.connect(voiceReverbGain)
     voiceReverbGain.connect(this.reverbSend)
 
-    const cleanups: (() => void)[] = [
+    // The procedural layer sits behind its own gain so a recording can take
+    // over without changing the track volume.
+    const gainNode = ctx.createGain()
+    gainNode.gain.value = 0.0001
+    gainNode.connect(voiceGain)
+
+    // Nodes owned by the voice itself, released when the track stops.
+    const voiceCleanups: (() => void)[] = [
       () => {
         try {
           voiceReverbGain.disconnect()
         } catch {}
       },
     ]
+
+    // Nodes owned by the procedural layer, released once a recording takes over.
+    const cleanups: (() => void)[] = []
 
     switch (id) {
       // ==========================================
@@ -1105,16 +1141,101 @@ export class AmbienceLibraryEngine {
       }
     }
 
-    return {
+    // The procedural bed is audible on its own until a recording takes over.
+    gainNode.gain.setValueAtTime(0.0001, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.8)
+
+    let proceduralStopped = false
+    const stopProcedural = () => {
+      if (proceduralStopped) return
+      proceduralStopped = true
+      cleanups.forEach((fn) => fn())
+    }
+
+    const voice: SoundVoice = {
       id,
-      gainNode,
+      gainNode: voiceGain,
+      layerGain: gainNode,
+      stopProcedural,
+      stopSample: null,
       stop: () => {
-        cleanups.forEach((fn) => fn())
+        stopProcedural()
+        voice.stopSample?.()
+        voiceCleanups.forEach((fn) => fn())
         try {
           gainNode.disconnect()
         } catch {}
+        try {
+          voiceGain.disconnect()
+        } catch {}
       },
     }
+
+    const sample = AMBIENCE_SAMPLES[id]
+    if (sample) {
+      void this.attachSampleLayer(id, voice, sample)
+    }
+
+    return voice
+  }
+
+  /**
+   * Downloads and decodes the recorded version of a track, then crossfades it
+   * over the procedural bed. When the file is missing or cannot be decoded the
+   * procedural layer simply keeps playing.
+   */
+  private async attachSampleLayer(
+    id: AmbienceSoundId,
+    voice: SoundVoice,
+    sample: AmbienceSampleEntry,
+  ): Promise<void> {
+    const buffer = await this.samples.load(id)
+    if (!buffer || this.disposed) return
+    // The track may have been switched off while the file was loading.
+    if (this.activeVoices.get(id) !== voice) return
+
+    const ctx = this.context
+    const source = ctx.createBufferSource()
+    source.buffer = buffer
+    source.loop = true
+
+    const sampleGain = ctx.createGain()
+    source.connect(sampleGain)
+    sampleGain.connect(voice.gainNode)
+
+    const now = ctx.currentTime
+    const fade = SAMPLE_CROSSFADE_SECONDS
+    source.start()
+    sampleGain.gain.setValueAtTime(0.0001, now)
+    sampleGain.gain.linearRampToValueAtTime(Math.max(0.0001, sample.gain), now + fade)
+
+    voice.stopSample = () => {
+      try {
+        source.stop()
+      } catch {}
+      try {
+        source.disconnect()
+      } catch {}
+      try {
+        sampleGain.disconnect()
+      } catch {}
+    }
+
+    if (sample.blend === 'layer') {
+      // The recording plays under the procedural bed, which stays audible.
+      return
+    }
+
+    // Replace: fade the procedural bed out while the recording fades in.
+    voice.layerGain.gain.cancelScheduledValues(now)
+    voice.layerGain.gain.setValueAtTime(voice.layerGain.gain.value, now)
+    voice.layerGain.gain.linearRampToValueAtTime(0.0001, now + fade)
+
+    window.setTimeout(() => {
+      if (this.disposed) return
+      if (this.activeVoices.get(id) !== voice) return
+      voice.stopProcedural()
+    }, (fade + 0.25) * 1000)
   }
 
   isAnyTrackActive(): boolean {
@@ -1125,6 +1246,11 @@ export class AmbienceLibraryEngine {
     return this.activeVoices.size
   }
 
+  /** True when a track is currently playing a downloaded recording. */
+  isPlayingRecording(id: AmbienceSoundId): boolean {
+    return this.activeVoices.get(id)?.stopSample != null
+  }
+
   dispose(): void {
     if (this.disposed) return
     this.disposed = true
@@ -1133,6 +1259,7 @@ export class AmbienceLibraryEngine {
       voice.stop()
     }
     this.activeVoices.clear()
+    this.samples.dispose()
 
     try {
       this.outputNode.disconnect()

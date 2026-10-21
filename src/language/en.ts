@@ -231,6 +231,12 @@ export const en = {
   'settings.language.title': 'Language',
   'settings.language.eyebrow': 'Interface language',
   'settings.language.select': 'Language',
+  'settings.credits.title': 'Audio credits',
+  'settings.credits.eyebrow': 'Recorded ambience',
+  'settings.credits.copy':
+    'These tracks play open-licensed field recordings downloaded from Wikimedia Commons. Everything else is generated live in the browser.',
+  'settings.credits.none':
+    'Every ambience is generated in the browser. No recorded files are used yet.',
   'settings.presets.title': 'Experience presets',
   'settings.presets.eyebrow': 'One click, no data lost',
   'settings.presets.copy':

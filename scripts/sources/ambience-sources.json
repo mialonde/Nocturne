@@ -1,0 +1,60 @@
+{
+  "$comment": "Curated list of recorded ambience sources. Each entry is downloaded by scripts/fetch-commons-samples.mjs and processed by scripts/prepare-samples.mjs. Licences must allow redistribution: CC0 / public domain only.",
+  "sources": [
+    {
+      "id": "rain",
+      "provider": "commons",
+      "title": "File:Light Rain Distant Thunder July 5th 2016.wav",
+      "blend": "replace",
+      "gain": 0.9,
+      "channels": "mono",
+      "trim": { "start": 2, "duration": 20 },
+      "loop": { "crossfade": 2.5 },
+      "targetLufs": -22
+    },
+    {
+      "id": "distant_thunder",
+      "provider": "commons",
+      "title": "File:Light Rain Distant Thunder July 5th 2016.wav",
+      "blend": "replace",
+      "gain": 0.85,
+      "channels": "mono",
+      "trim": { "start": 44, "duration": 16 },
+      "loop": { "crossfade": 2.5 },
+      "targetLufs": -22
+    },
+    {
+      "id": "wind",
+      "provider": "commons",
+      "title": "File:Howling wind.ogg",
+      "blend": "replace",
+      "gain": 0.8,
+      "channels": "mono",
+      "trim": { "start": 4, "duration": 22 },
+      "loop": { "crossfade": 2.5 },
+      "targetLufs": -22
+    },
+    {
+      "id": "ocean",
+      "provider": "commons",
+      "title": "File:Ocean Waves on a Tropical Beach.ogg",
+      "blend": "replace",
+      "gain": 0.9,
+      "channels": "stereo",
+      "trim": { "start": 3, "duration": 24 },
+      "loop": { "crossfade": 2.5 },
+      "targetLufs": -22
+    },
+    {
+      "id": "forest",
+      "provider": "commons",
+      "title": "File:Birds on Vieux Limoilou, Québec ville.wav",
+      "blend": "replace",
+      "gain": 0.85,
+      "channels": "stereo",
+      "trim": { "start": 6, "duration": 24 },
+      "loop": { "crossfade": 2.5 },
+      "targetLufs": -22
+    }
+  ]
+}

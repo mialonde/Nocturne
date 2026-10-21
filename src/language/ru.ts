@@ -230,6 +230,12 @@ export const ru: Messages = {
   'settings.language.title': 'Язык',
   'settings.language.eyebrow': 'Язык интерфейса',
   'settings.language.select': 'Язык',
+  'settings.credits.title': 'Авторы звука',
+  'settings.credits.eyebrow': 'Записанные текстуры',
+  'settings.credits.copy':
+    'Эти дорожки используют полевые записи с открытой лицензией, загруженные с Wikimedia Commons. Всё остальное синтезируется в браузере.',
+  'settings.credits.none':
+    'Все текстуры синтезируются в браузере. Записанных файлов пока нет.',
   'settings.presets.title': 'Предустановки сеанса',
   'settings.presets.eyebrow': 'В один клик, без потери данных',
   'settings.presets.copy':
