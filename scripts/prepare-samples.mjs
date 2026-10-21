@@ -116,7 +116,10 @@ async function main() {
 
     const rawPath = join(root, record.rawFile.split('\\').join('/'))
     const crossfade = Math.min(source.loop?.crossfade ?? 2.5, source.trim.duration / 3)
-    const bodyLength = source.trim.duration - crossfade
+    // `acrossfade` overlaps the tail of this body with the head stream, so
+    // the output length is bodyLength + crossfade - crossfade. Keep the body
+    // at the requested duration instead of subtracting the overlap twice.
+    const bodyLength = source.trim.duration
     const workFile = join(tempDir, `${source.id}.wav`)
 
     console.log(`\n[${source.id}] ${record.title}`)

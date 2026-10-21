@@ -1,5 +1,11 @@
 # Recorded Turkish guidance
 
+Future production is tracked in [`../TODO.md`](../TODO.md). The expanded Turkish
+narration script and estimated durations are in
+[`guidance-recording-script-tr.md`](guidance-recording-script-tr.md). That document
+describes a planned one-shot cue schedule; the current player still uses an
+adjustable repeat interval. No speech generation is scheduled automatically.
+
 The app uses bundled recordings, not operating-system speech synthesis. There
 are three independent profiles: sleep, focus and meditation. Each has one arrival
 and two subsequent reminders. Reminders repeat at the user's chosen interval;
