@@ -1,0 +1,44 @@
+:root {
+  color-scheme: dark;
+  --font-sans: 'Manrope Variable', 'Manrope', 'Segoe UI', sans-serif;
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+
+  --bg-deep: #010205;
+  --bg-room: #04070c;
+  --bg-raised: #080d14;
+  --surface: rgba(9, 14, 22, 0.66);
+  --surface-strong: rgba(10, 16, 25, 0.9);
+  --surface-soft: rgba(190, 218, 228, 0.035);
+  --surface-hover: rgba(190, 218, 228, 0.075);
+  --text: #e3eaee;
+  --text-soft: #b5c1ca;
+  --muted: #83919e;
+  --faint: #5b6874;
+  --line: rgba(180, 205, 218, 0.12);
+  --line-soft: rgba(180, 205, 218, 0.07);
+  --line-strong: rgba(194, 220, 229, 0.24);
+  --accent: #c4dbe2;
+  --accent-bright: #edf7f9;
+  --accent-dim: #8da9b4;
+  --cyan: #8dc8d7;
+  --violet: #a69dc4;
+  --danger: #dda0a0;
+  --danger-soft: rgba(202, 119, 119, 0.13);
+  --warning: #d7bc8f;
+  --warning-soft: rgba(190, 156, 102, 0.11);
+
+  --radius-xs: 7px;
+  --radius-sm: 11px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-pill: 999px;
+
+  --shadow-panel: 0 30px 100px rgba(0, 0, 0, 0.65), 0 2px 20px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 12px 36px rgba(0, 0, 0, 0.28);
+  --ease: cubic-bezier(0.22, 0.7, 0.22, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --top-bar-height: 86px;
+}

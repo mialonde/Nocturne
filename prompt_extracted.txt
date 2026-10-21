@@ -1,0 +1,256 @@
+<USER_REQUEST>
+# NOCTURNE: 6D CONSCIOUSNESS SIMULATOR
+## Feature Integration & Implementation Specification
+
+Integrate a new immersive atmosphere mode called **“6D Consciousness Simulator”** into the existing Nocturne application.
+
+The current atmosphere modes are:
+- Dusk
+- Void
+- Abyss
+- Ether
+
+The new mode must feel like a distinct experiential environment, not a reskinned version of an existing atmosphere. Preserve the application's existing visual identity, architecture, navigation, meditation features, audio controls, responsive behavior, and deployment compatibility.
+
+**Do not rebuild the application from scratch. Inspect the existing codebase first and implement this as a cohesive extension.**
+
+## 1. Core Experience
+
+Create an immersive, abstract environment that evokes the perception of consciousness moving through a multidimensional spacetime structure.
+
+The environment should suggest:
+- Space existing as layered, translucent structures.
+- Time behaving like a navigable dimension rather than a simple linear sequence.
+- Consciousness observing and moving between different states.
+- Infinite depth without a clearly defined physical horizon.
+- Subtle transitions between stable and fluid spatial configurations.
+- A quiet, contemplative atmosphere suitable for meditation.
+
+This is an artistic and perceptual simulation, not a claim that actual six-dimensional consciousness or physical six-dimensional space has been scientifically reproduced.
+
+Avoid conventional sci-fi interfaces, cyberpunk neon, obvious galaxies, spinning planets, generic starfields, excessive particles, and distracting HUD elements.
+
+## 2. Visual Environment
+
+Build a real-time, interactive 3D environment using the project's existing rendering technology. If the project already uses Three.js, reuse its rendering infrastructure instead of introducing a second rendering engine.
+
+### Visual language
+
+Use a restrained palette:
+- Deep black and near-black blue.
+- Muted indigo and violet.
+- Desaturated cyan-blue accents.
+- Soft ivory and pale yellow-white light.
+
+Lighting must feel ambient and source-independent, as if the environment itself emits a faint, diffuse illumination.
+
+Create a central translucent geometric structure resembling a glass membrane, an abstract multidimensional cell, or an architectural form whose internal geometry cannot be understood at a glance.
+
+Surround it with several spatial layers:
+- Distant, slowly shifting geometric planes.
+- Translucent surfaces with subtle refraction-like visual effects.
+- Fine particles moving along curved, non-linear paths.
+- Faint luminous connections that appear and disappear.
+- Depth layers that suggest space extending beyond the visible scene.
+
+The composition should remain visually legible and calm. Do not fill the entire screen with effects.
+
+### Six-dimensional visual metaphor
+
+Represent the six conceptual dimensions through interacting visual behaviors rather than six ordinary coordinate axes:
+
+1. **Spatial depth:** layered geometry, parallax and perspective.
+2. **Temporal flow:** slowly evolving structures and time-dependent deformations.
+3. **State transitions:** smooth changes between distinct configurations of the same environment.
+4. **Relational geometry:** connections between distant points that change as the environment evolves.
+5. **Phase variation:** subtle shifts in color, transparency, and oscillation.
+6. **Observer interaction:** the environment responds to the user's gaze-like camera orientation and interaction, changing the perceived relationships between its layers.
+
+These are artistic mappings, not a scientific definition of six-dimensional spacetime.
+
+## 3. Time and State Mechanics
+
+The environment must not feel like a looping screensaver.
+
+Implement a continuous simulation clock that drives multiple independent but coordinated processes:
+- Slow geometric deformation.
+- Layer-specific phase offsets.
+- Particle trajectories.
+- Light intensity and color temperature.
+- Changes in spatial relationships.
+- Gradual transitions between environmental states.
+
+Use smooth interpolation and deterministic mathematical functions wherever possible. Avoid abrupt random jumps.
+
+Introduce a concept called **State Drift**: the environment gradually evolves through related configurations without obvious scene cuts.
+
+Introduce **Temporal Echoes**: faint traces of previous geometric states briefly remain visible before dissolving. These should suggest temporal persistence, not ghost characters or duplicated objects.
+
+Introduce **Phase Alignment**: occasionally, multiple visual layers briefly settle into a coherent geometric arrangement before slowly diverging again.
+
+The experience should be continuous, meditative and non-repetitive over extended sessions. Avoid conspicuous, short repeating animation loops.
+
+## 4. Camera and Interaction
+
+Provide intuitive controls:
+- Drag to rotate the viewing direction.
+- Smooth camera inertia with natural deceleration.
+- Scroll or pinch to adjust viewing distance.
+- Optional auto-drift mode for hands-free exploration.
+- A reset-view control.
+- A toggle for reduced motion.
+
+Camera motion must never be disorienting. Use conservative movement limits and smooth interpolation.
+
+Do not force the camera to move constantly. When the user stops interacting, the scene should gradually settle into slow autonomous motion.
+
+If feasible within the existing architecture, add a subtle parallax response to pointer movement. Respect device capabilities and reduced-motion preferences.
+
+On mobile, use touch gestures without interfering with existing application controls.
+
+## 5. Audio Integration
+
+Integrate the simulator into Nocturne's existing ambient audio system.
+
+Do not create a separate, conflicting audio player.
+
+Add a dedicated sound profile named **“Dimensional Drift”** with the following conceptual layers:
+- A low, soft atmospheric drone.
+- Sparse, distant crystalline tones.
+- Slow, airy textures.
+- Extremely subtle granular or spatial movement.
+- Optional soft noise resembling distant wind or the movement of air through a large empty structure.
+
+Audio must remain unobtrusive and suitable for meditation.
+
+Requirements:
+- Independent volume control for the simulator ambience if the current mixer supports it.
+- Smooth fade-in and fade-out.
+- No sudden transients, loud impacts, jump scares, or sharp high-frequency sounds.
+- No autoplay before the user has explicitly enabled audio.
+- Correct handling of pause, resume, mute, and session termination.
+- No audio duplication when switching between atmosphere modes.
+
+If no appropriate audio assets exist, inspect the current asset structure and use a compatible procedural or synthesized ambience only if it fits the existing audio architecture. Do not download copyrighted sound assets without authorization.
+
+## 6. User Interface
+
+The simulator must appear as a first-class atmosphere option alongside Dusk, Void, Abyss, and Ether.
+
+Follow the existing Nocturne design system:
+- Typography.
+- Spacing.
+- Button styling.
+- Border radius.
+- Color tokens.
+- Transitions.
+- Navigation and modal conventions.
+
+Give the new mode a restrained visual identity. A small animated geometric preview or subtle live thumbnail may distinguish it from the other atmospheres.
+
+When the simulator opens, present a minimal interface containing:
+- The title “6D Consciousness Simulator”.
+- A brief subtitle: “Explore evolving states of space, time and perception.”
+- A start or resume control if the application requires explicit session initiation.
+- An ambience toggle and volume control.
+- A minimal settings panel for camera drift, visual intensity and reduced motion.
+- An unobtrusive exit control.
+
+Hide unnecessary controls during immersion and reveal them when the user interacts with the interface.
+
+Avoid excessive text, technical graphs, numerical dimension readouts, and decorative controls that do not perform a real function.
+
+The experience must work without requiring the user to understand the underlying simulation.
+
+## 7. Technical Architecture
+
+Before editing:
+1. Inspect the project structure.
+2. Identify the existing atmosphere selection mechanism.
+3. Locate shared rendering, audio, state management, and styling modules.
+4. Determine the current deployment and asset-loading strategy.
+5. Identify constraints imposed by the existing application.
+
+Then implement the feature using the smallest coherent set of changes.
+
+Technical requirements:
+- Reuse existing components and dependencies where practical.
+- Keep the new mode isolated enough to prevent regressions in existing modes.
+- Avoid duplicated audio contexts, animation loops, event listeners, and rendering canvases.
+- Ensure proper cleanup when leaving the simulator.
+- Dispose of geometries, materials, textures and other GPU resources when no longer needed.
+- Avoid unnecessary React re-renders or equivalent framework-level work on every animation frame.
+- Use requestAnimationFrame or the existing rendering loop.
+- Handle browser tab visibility changes and pause or reduce simulation work when appropriate.
+- Support high-DPI displays without excessive GPU load.
+- Avoid unbounded object creation inside animation loops.
+- Provide graceful fallback behavior if WebGL or a required graphics feature is unavailable.
+
+## 8. Performance and Accessibility
+
+Target smooth rendering on typical modern desktop hardware, with a sensible adaptive quality strategy for weaker devices.
+
+Implement:
+- Adaptive particle counts.
+- Configurable visual quality.
+- Reduced-motion support.
+- Conservative mobile defaults.
+- Pause or throttling when the page is hidden.
+- Graceful recovery from rendering errors where feasible.
+
+Do not sacrifice readability or interaction responsiveness for visual effects.
+
+The simulator must not block access to the application's main controls.
+
+## 9. Integration and Regression Testing
+
+After implementation, verify:
+- The new atmosphere appears in the existing selection interface.
+- Selecting it opens the correct experience.
+- Switching to another atmosphere removes the previous scene and stops its audio.
+- Returning to the simulator does not create duplicate animation loops or audio playback.
+- Volume, mute, pause, resume and exit controls work.
+- Pointer, touch and camera controls behave correctly.
+- Reduced-motion settings are respected.
+- The scene resizes correctly.
+- No new console errors or unhandled promise rejections appear.
+- Existing Dusk, Void, Abyss and Ether modes remain functional.
+- The application can still be built and deployed through its existing Vercel workflow.
+
+Do not claim that a test passed unless it was actually performed. Report any unverified behavior or unresolved issue explicitly.
+
+## 10. Documentation and Delivery
+
+After implementation:
+- Update the README to document the new atmosphere.
+- Add genuine screenshots of the implemented simulator, not mockups.
+- Update any existing feature list, configuration notes or controls documentation.
+- Include setup or deployment changes only if they are actually necessary.
+- Preserve all unrelated project functionality.
+
+Deliver a concise report containing:
+1. What was implemented.
+2. Which files were created or modified.
+3. How the visual simulation works.
+4. How the audio integration works.
+5. Which tests were actually performed.
+6. Any known limitations.
+
+## Final Acceptance Criterion
+
+The final result must feel like entering a quiet, unfamiliar structure of space and time: translucent layers, subtle geometric transformations, non-linear temporal traces, ambient light, and restrained sound.
+
+It must feel immersive without becoming visually noisy, futuristic without becoming cliché, and mysterious without sacrificing usability.
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-21T05:53:30+03:00.
+
+The user's current state is as follows:
+Browser State:
+  Page 930B42C157E254A0F76520D1FC94D903 (Physical Blocks — Material Gravity) - http://127.0.0.1:4173/index.html?v=lock-1792545447560 [ACTIVE]
+    Viewport: 1584x905, Page Height: 905
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Claude Sonnet 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>
