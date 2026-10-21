@@ -20,7 +20,7 @@ const hash = createHash('sha256')
 hash.update(template)
 // Include audio bytes in the version so replacement recordings invalidate old caches.
 for (const file of files) {
-  hash.update(relative(dist, file))
+  hash.update(relative(dist, file).split('\\').join('/'))
   hash.update(await readFile(file))
 }
 const version = `nocturne-${hash.digest('hex').slice(0, 16)}`

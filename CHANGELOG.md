@@ -6,6 +6,15 @@ and the project uses [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Media-session play and pause commands are serialized and idempotent. Paused playback keeps its lock-screen controls, and unsupported actions do not break the remaining controls.
+- Offline cache cleanup only removes obsolete Nocturne caches. Production builds generate a content-versioned worker and precache the app shell, fonts and optional modules. Updated recordings refresh online, with cached fallback offline.
+
+### Performance
+
+- Studio, session designer and Cosmos geometry load on demand. Delayed Cosmos loading respects theme changes and disposed scenes; panel loading failures show a recoverable error message.
+
 ### Added
 
 - **Recorded ambience.** Six ambience tracks now play open-licensed field

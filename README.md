@@ -188,6 +188,9 @@ The recorder handles unsupported codecs, empty takes, encoder errors, visibility
 
 ## Known limits
 
+- Production builds precache the app shell and optional interface modules after the offline worker finishes installing. Recorded ambience becomes available offline after it has been played online. New releases activate after existing app tabs close.
+- Audio-only WAV export converts the browser's compressed recording to 16-bit PCM; it is not a lossless capture of the original signal.
+
 - Binaural separation requires headphones. Stereo speakers blend the channels and remove the intended difference.
 - Native output is WebM (VP9/VP8 + Opus where available). MP4 requires a separate conversion.
 - 60 fps capture depends on the GPU, display and browser encoder; 30 fps is the safer default.
