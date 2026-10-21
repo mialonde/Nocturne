@@ -79,7 +79,7 @@ export const AMBIENCE_SAMPLE_ENTRIES: AmbienceSampleEntry[] = [
     ogg: '/audio/ambient/fireplace.ogg',
     mp3: '/audio/ambient/fireplace.mp3',
     blend: 'replace',
-    gain: 0.85,
+    gain: 1,
     credit: {
       title: "Nolenai, Lithuania, little bonfire",
       author: "alas23/sala",

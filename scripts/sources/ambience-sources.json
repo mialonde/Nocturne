@@ -62,9 +62,9 @@
       "identifier": "aporee_43670_49721",
       "file": "smallfireplace.mp3",
       "blend": "replace",
-      "gain": 0.85,
+      "gain": 1,
       "channels": "mono",
-      "trim": { "start": 20, "duration": 24 },
+      "trim": { "start": 34, "duration": 16 },
       "loop": { "crossfade": 2.5 },
       "targetLufs": -26
     }
