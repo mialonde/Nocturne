@@ -1,5 +1,6 @@
 /**
- * Downloads the curated ambience recordings from Wikimedia Commons.
+ * Downloads the curated ambience recordings from Wikimedia Commons and
+ * archive.org.
  *
  * Usage: node scripts/fetch-commons-samples.mjs
  *
@@ -14,6 +15,7 @@ import { dirname, extname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { downloadFile, fetchFileInfo } from './lib/commons.mjs'
+import { downloadItemFile, fetchItemInfo, findItemFile } from './lib/archive.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
@@ -68,13 +70,25 @@ async function main() {
     if (cached) {
       console.log(`  reuse   : ${cached.rawPath}`)
     } else {
-      const payload = await downloadFile(info.url, rawPath)
-      const checksum = createHash('sha1').update(payload).digest('hex')
-      if (info.sha1 && checksum !== info.sha1) {
-        throw new Error(`Checksum mismatch for ${source.id}: expected ${info.sha1}, got ${checksum}`)
+      const existing = await readFile(rawPath).catch(() => null)
+      if (existing) {
+        const checksum = createHash('sha1').update(existing).digest('hex')
+        if (info.sha1 && checksum !== info.sha1) {
+          throw new Error(
+            `Checksum mismatch for the existing ${rawPath}: expected ${info.sha1}, got ${checksum}. Delete the file and run again.`,
+          )
+        }
+        console.log(`  present : ${rawPath} (checksum verified)`)
+        downloaded.set(info.url, { rawPath, checksum, bytes: existing.length })
+      } else {
+        const payload = await downloadFile(info.url, rawPath)
+        const checksum = createHash('sha1').update(payload).digest('hex')
+        if (info.sha1 && checksum !== info.sha1) {
+          throw new Error(`Checksum mismatch for ${source.id}: expected ${info.sha1}, got ${checksum}`)
+        }
+        console.log(`  saved   : ${rawPath}`)
+        downloaded.set(info.url, { rawPath, checksum, bytes: payload.length })
       }
-      console.log(`  saved   : ${rawPath}`)
-      downloaded.set(info.url, { rawPath, checksum, bytes: payload.length })
     }
 
     const record = downloaded.get(info.url)

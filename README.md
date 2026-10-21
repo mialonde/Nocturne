@@ -21,6 +21,32 @@ The binaural field uses one hard-panned sine tone per ear: the left channel play
 
 The ambient bed is generated per atmosphere from slow drones, filtered air, harmonics and resonance, with an optional convolution space. It is mixed independently from the binaural branch.
 
+### Recorded ambience
+
+The ambience library starts every track as a **procedural bed**, so a sound never opens in silence. Some tracks also have a **recorded field recording** attached. When the file has been downloaded and decoded, it crossfades over the procedural bed over 2.2 seconds; when the file is missing or cannot be decoded, the procedural bed simply keeps playing.
+
+Every recording is redistributed under a licence that allows it to ship inside the application (CC0 or public domain). The full list with authors, licences and source links is in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md), per-track licence notes live in `public/licenses/ambient/`, and the same credits are listed in the app under **Settings → Audio credits**.
+
+#### Updating the recorded tracks
+
+The recordings are reproducible from source. `scripts/sources/ambience-sources.json` lists the curated Commons files, the trim window and the processing settings.
+
+```bash
+npm run samples:fetch     # download the originals into assets/ambient-raw/ and write the licence lock file
+npm run samples:prepare   # trim, loop, normalise and encode into public/audio/ambient/
+```
+
+`samples:prepare` needs `ffmpeg`. It uses the `ffmpeg-static` package when it is installed, and falls back to a system `ffmpeg` or the `FFMPEG_BIN` environment variable.
+
+Processing per track:
+
+1. **Trim** to the selected region of the source file.
+2. **Seamless loop**: the tail is folded back into the head with an equal-power crossfade, so the loop point is inaudible.
+3. **Loudness**: the integrated loudness is measured and a static gain is applied, then a limiter caps the peak. The dynamics of the recording stay intact.
+4. **Encode**: Ogg Vorbis for the browser and an MP3 fallback for engines without Ogg support.
+
+The script then regenerates `src/config/ambienceSamples.generated.ts`, the licence notices and the credit table.
+
 ### Generative visuals
 
 Five atmospheres are included: **Dusk**, **Void**, **Abyss**, **Ether** and **Cosmos**.
