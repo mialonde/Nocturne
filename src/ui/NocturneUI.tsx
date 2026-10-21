@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Eye } from 'lucide-react'
 import { useTranslation } from '../language/useTranslation'
 import { useNocturneRuntime } from '../runtime/NocturneRuntime'
@@ -40,9 +41,15 @@ export function NocturneUI() {
   const activePanel = useNocturneStore((state) => state.activePanel)
   const mode = useNocturneStore((state) => state.mode)
   const theme = useNocturneStore((state) => state.theme)
+  const language = useNocturneStore((state) => state.language)
   const setUiHidden = useNocturneStore((state) => state.setUiHidden)
   useKeyboardShortcuts()
   useRecordingNotifications(runtime.recording)
+
+  useEffect(() => {
+    document.documentElement.lang = language
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
+  }, [language])
 
   const isCosmos = theme === 'cosmos'
 
@@ -59,7 +66,7 @@ export function NocturneUI() {
       {experienceStarted && !uiHidden && !isCosmos ? <FrequencyReadout /> : null}
       {experienceStarted && !uiHidden && !isCosmos && mode === 'breath' ? <BreathGuide /> : null}
       {experienceStarted && !uiHidden && !isCosmos ? <SessionHud /> : null}
-      {experienceStarted && !uiHidden && !isCosmos ? <SleepTimerHud /> : null}
+      {experienceStarted && !isCosmos ? <SleepTimerHud compact={uiHidden} /> : null}
       {experienceStarted && !uiHidden && !isCosmos ? <Dock /> : null}
       {experienceStarted ? <RecordingHud compact={uiHidden} /> : null}
 

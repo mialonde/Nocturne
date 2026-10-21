@@ -365,16 +365,53 @@
   gap: 9px;
 }
 
+.sleep-timer__active-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .sleep-timer__remaining {
-  align-self: flex-start;
   padding: 4px 8px;
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-pill);
   color: var(--cyan);
-  font-size: 8px;
+  font-size: 10px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
   white-space: nowrap;
+}
+
+.sleep-timer__extend-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sleep-timer__extend-title {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.sleep-timer__extend-btn {
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(188, 217, 226, 0.05);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sleep-timer__extend-btn:hover {
+  background: rgba(188, 217, 226, 0.15);
+  border-color: var(--cyan);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 

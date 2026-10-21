@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { ChevronDown, ChevronUp, Headphones, Trash2, Wind } from 'lucide-react'
 import { AMBIENT_PROFILE_NAMES, computeBinauralPair, formatHz } from '../../config/audio'
-import { AMBIENCE_SOUND_LIST, PRESET_MIXES } from '../../config/ambience'
+import { AMBIENCE_SOUND_LIST, AMBIENCE_SOUNDS, PRESET_MIXES, type AmbienceSoundId } from '../../config/ambience'
 import { THEMES, THEME_LIST, isThemeId } from '../../config/themes'
+import { useNocturneStore } from '../../store/useNocturneStore'
 import type { BreathPattern, SessionSegment } from '../../types'
 import { NumberField, SelectField, Slider, TextField, Toggle } from '../components/controls'
 import { formatLongDuration } from '../format'
@@ -29,10 +31,21 @@ export function SessionSegmentCard({
   onMove: (direction: -1 | 1) => void
   onRemove: () => void
 }) {
+  const userMixes = useNocturneStore((state) => state.userMixes)
   const pair = computeBinauralPair(segment.carrier, segment.beat)
   const theme = THEMES[segment.theme]
   const updateBreath = (patch: Partial<BreathPattern>) =>
     onChange({ breathPattern: { ...segment.breathPattern, ...patch } })
+
+  const soundscapeLabel = useMemo(() => {
+    const userMix = userMixes.find((m) => m.id === segment.ambientProfile)
+    if (userMix) return userMix.name
+    const preset = PRESET_MIXES.find((m) => m.id === segment.ambientProfile)
+    if (preset) return preset.nameEn || preset.name
+    const sound = AMBIENCE_SOUNDS[segment.ambientProfile as AmbienceSoundId]
+    if (sound) return sound.nameEn || sound.name
+    return AMBIENT_PROFILE_NAMES[segment.ambientProfile as keyof typeof AMBIENT_PROFILE_NAMES] ?? segment.ambientProfile
+  }, [segment.ambientProfile, userMixes])
 
   return (
     <article className={`segment-card ${selected ? 'is-selected' : ''} ${live ? 'is-live' : ''}`.trim()}>
@@ -49,7 +62,7 @@ export function SessionSegmentCard({
           <span className="segment-card__identity">
             <strong>{segment.label || `Passage ${index + 1}`}</strong>
             <span>
-              {formatLongDuration(segment.durationSec)} · {theme.name} · {Math.round(segment.carrier)} Hz
+              {formatLongDuration(segment.durationSec)} · {theme.name} · {soundscapeLabel} · {Math.round(segment.carrier)} Hz
               {segment.binaural ? ` / Δ ${formatHz(pair.beat, 1)}` : ''}
             </span>
           </span>
@@ -149,11 +162,15 @@ export function SessionSegmentCard({
                 })),
                 ...AMBIENCE_SOUND_LIST.map((item) => ({
                   value: item.id,
-                  label: `${item.category.toUpperCase()} · ${item.name} (${item.nameEn})`,
+                  label: `${item.category.toUpperCase()} · ${item.nameEn || item.name}`,
                 })),
                 ...PRESET_MIXES.map((mix) => ({
                   value: mix.id,
-                  label: `MIX · ${mix.name}`,
+                  label: `PRESET · ${mix.nameEn || mix.name}`,
+                })),
+                ...userMixes.map((mix) => ({
+                  value: mix.id,
+                  label: `MY MIX · ${mix.name}`,
                 })),
               ]}
               onChange={(value) => onChange({ ambientProfile: value })}
