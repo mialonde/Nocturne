@@ -1,6 +1,7 @@
 import { EyeOff, Globe, Keyboard, MonitorUp, RotateCcw, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState } from 'react'
 import { getAmbienceSampleCreditRows } from '../../config/ambienceSamples'
+import { THEMES } from '../../config/themes'
 import { LANGUAGE_OPTIONS, type LanguageCode } from '../../language/types'
 import { useTranslation } from '../../language/useTranslation'
 import { useNocturneRuntime } from '../../runtime/NocturneRuntime'
@@ -33,6 +34,11 @@ export function SettingsPanel() {
   const updateVisuals = useNocturneStore((state) => state.updateVisuals)
   const shortcut = useNocturneStore((state) => state.fullscreenShortcut)
   const setShortcut = useNocturneStore((state) => state.setFullscreenShortcut)
+  const theme = useNocturneStore((state) => state.theme)
+  const atmosphereDrivesSoundscape = useNocturneStore((state) => state.atmosphereDrivesSoundscape)
+  const setAtmosphereDrivesSoundscape = useNocturneStore(
+    (state) => state.setAtmosphereDrivesSoundscape,
+  )
   const resetPreferences = useNocturneStore((state) => state.resetPreferences)
   const setUiHidden = useNocturneStore((state) => state.setUiHidden)
   const sessionActive = useNocturneStore((state) => state.sessionPlayback.status !== 'idle')
@@ -127,6 +133,18 @@ export function SettingsPanel() {
           }))}
           onChange={(value) => setLanguage(value as LanguageCode)}
         />
+      </PanelSection>
+
+      <PanelSection title="Atmosphere" eyebrow="Light and sound in step">
+        <Toggle
+          label="Atmosphere drives the soundscape"
+          checked={atmosphereDrivesSoundscape}
+          onChange={setAtmosphereDrivesSoundscape}
+          description="Choosing an atmosphere also brings its ambience with it. Turn this off to keep your own mix."
+        />
+        <p className="control-hint">
+          {THEMES[theme].soundscape.note}
+        </p>
       </PanelSection>
 
       <PanelSection title="Interface" eyebrow="Leaves no trace in recordings">

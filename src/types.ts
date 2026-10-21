@@ -61,6 +61,16 @@ export interface RecordingSettings {
   cleanCapture: boolean
 }
 
+export interface BeatLadder {
+  /**
+   * Beat difference in Hz at the end of the passage. The passage always
+   * starts at its own beat value, so a ladder is a slide from there.
+   */
+  to: number
+  /** Optional carrier drift in Hz over the passage. */
+  carrierTo?: number
+}
+
 export interface SessionSegment {
   id: string
   label: string
@@ -76,6 +86,8 @@ export interface SessionSegment {
   fadeInSec: number
   fadeOutSec: number
   transitionSec: number
+  /** Slides the beat difference across the passage. */
+  ladder?: BeatLadder | null
 }
 
 export interface SavedSession {

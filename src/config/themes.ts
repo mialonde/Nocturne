@@ -1,3 +1,4 @@
+import type { AmbienceSoundId } from './ambience'
 import type { ThemeDefinition, ThemeId } from '../types'
 
 export interface ThemePalette {
@@ -35,6 +36,16 @@ export interface AtmosphereTuning {
 export interface ThemeConfig extends ThemeDefinition {
   palette: ThemePalette
   atmosphere: AtmosphereTuning
+  soundscape: ThemeSoundscape
+}
+
+/**
+ * The ambience that belongs to an atmosphere. Choosing an atmosphere can
+ * carry this mix with it, so the room keeps its sound and its light in step.
+ */
+export interface ThemeSoundscape {
+  tracks: Partial<Record<AmbienceSoundId, number>>
+  note: string
 }
 
 export const THEMES: Record<ThemeId, ThemeConfig> = {
@@ -74,6 +85,10 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
       delayMix: 0.22,
       detuneCents: 4,
     },
+    soundscape: {
+      tracks: { rain: 0.5, wind: 0.28, night_crickets: 0.18 },
+      note: 'Rain on a window, a low wind and the occasional cricket.',
+    },
   },
   void: {
     id: 'void',
@@ -110,6 +125,10 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
       reverbWet: 0.38,
       delayMix: 0.1,
       detuneCents: 2.2,
+    },
+    soundscape: {
+      tracks: { brown_noise: 0.34, ventilation: 0.26, low_intensity_tones: 0.3 },
+      note: 'Brown noise, distant ventilation and a floor tone.',
     },
   },
   abyss: {
@@ -148,6 +167,10 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
       delayMix: 0.3,
       detuneCents: 5.5,
     },
+    soundscape: {
+      tracks: { ocean: 0.58, wind: 0.3, deep_resonance: 0.22 },
+      note: 'Slow shore break under a deep resonance.',
+    },
   },
   ether: {
     id: 'ether',
@@ -185,6 +208,10 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
       delayMix: 0.26,
       detuneCents: 3.4,
     },
+    soundscape: {
+      tracks: { forest: 0.42, spatial_drone: 0.3, minimal_ambient: 0.32 },
+      note: 'Birdsong, an open drone and sparse minimal tones.',
+    },
   },
   cosmos: {
     id: 'cosmos',
@@ -221,6 +248,10 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
       reverbWet: 0.78,
       delayMix: 0.32,
       detuneCents: 6,
+    },
+    soundscape: {
+      tracks: { deep_resonance: 0.38, spatial_drone: 0.42, synthetic_atmosphere: 0.32 },
+      note: 'Resonance, a wide drone and a synthetic shimmer.',
     },
   },
 }

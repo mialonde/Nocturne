@@ -330,6 +330,25 @@ export class AudioEngine {
     return this.ambienceLibrary
   }
 
+  /**
+   * Slides the binaural pair from one beat difference to another. The ramp
+   * runs in the audio thread for the whole length of the passage.
+   */
+  setBinauralLadder(
+    from: { carrier: number; beat: number },
+    to: { carrier: number; beat: number },
+    seconds: number,
+  ): void {
+    this.binaural?.setLadder(from, to, seconds)
+  }
+
+  /** The frequencies the pair is playing right now. */
+  getBinauralFrequencies(): { left: number; right: number; beat: number } | null {
+    if (!this.binaural) return null
+    const pair = this.binaural.getFrequencyPair()
+    return { left: pair.left, right: pair.right, beat: pair.beat }
+  }
+
   setSessionFade(value: number, rampSeconds = 0.18): void {
     if (!this.context || !this.sessionFadeGain) return
     safeSetTarget(

@@ -7,6 +7,7 @@ import type {
   BreathPattern,
   ExperienceMode,
   SavedSession,
+  SessionSegment,
   SoundscapeProfileId,
   ThemeId,
 } from '../types'
@@ -200,7 +201,26 @@ export class SessionPlayer {
         Math.max(0.0001, segmentEnvelope(segmentElapsedSeconds, segment)),
         0.2,
       )
+      this.applyLadder(segment, Math.max(0, segment.durationSec - segmentElapsedSeconds))
     }
+  }
+
+  /**
+   * Slides the beat difference across the rest of the passage. The ramp is
+   * scheduled in the audio thread, so it keeps its shape no matter what the
+   * interface does.
+   */
+  private applyLadder(segment: SessionSegment, remainingSeconds: number): void {
+    const ladder = segment.ladder
+    if (!ladder || !segment.binaural) return
+    if (Math.abs(ladder.to - segment.beat) < 0.05) return
+    if (remainingSeconds <= 0.5) return
+
+    this.audio.setBinauralLadder(
+      { carrier: segment.carrier, beat: segment.beat },
+      { carrier: ladder.carrierTo ?? segment.carrier, beat: ladder.to },
+      remainingSeconds,
+    )
   }
 
   async resume(): Promise<void> {

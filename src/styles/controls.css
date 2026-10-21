@@ -378,6 +378,7 @@
   line-height: 1.2;
   text-transform: uppercase;
   white-space: nowrap;
+  text-decoration: none;
   transition:
     color 180ms var(--ease),
     background 180ms var(--ease),

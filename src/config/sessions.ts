@@ -1,5 +1,5 @@
 import type { SavedSession, SessionSegment } from '../types'
-import { DEFAULT_BREATH_PATTERN } from './audio'
+import { BEAT_MAX, BEAT_MIN, CARRIER_MAX, CARRIER_MIN, DEFAULT_BREATH_PATTERN } from './audio'
 
 let segmentSequence = 0
 
@@ -24,6 +24,7 @@ export function createEmptySegment(overrides: Partial<SessionSegment> = {}): Ses
     fadeInSec: 0,
     fadeOutSec: 0,
     transitionSec: 6,
+    ladder: null,
     ...overrides,
   }
 }
@@ -52,6 +53,7 @@ export function createStarterSession(): SavedSession {
         binaural: true,
         fadeInSec: 12,
         transitionSec: 8,
+        ladder: { to: 8 },
       }),
       createEmptySegment({
         label: 'Widening rings',
@@ -63,6 +65,7 @@ export function createStarterSession(): SavedSession {
         ambientIntensity: 0.5,
         binaural: true,
         transitionSec: 12,
+        ladder: { to: 6 },
       }),
       createEmptySegment({
         label: 'Darker water',
@@ -74,6 +77,7 @@ export function createStarterSession(): SavedSession {
         ambientIntensity: 0.32,
         binaural: true,
         transitionSec: 12,
+        ladder: { to: 4 },
       }),
       createEmptySegment({
         label: 'Return to stillness',
@@ -123,6 +127,19 @@ function finiteOr(value: number, fallback: number): number {
 export function normalizeSegments(segments: SessionSegment[]): SessionSegment[] {
   return segments.map((segment) => {
     const durationSec = Math.max(10, Math.min(60 * 60, Math.round(finiteOr(segment.durationSec, 180))))
+    const ladder = segment.ladder
+      ? {
+          to: Math.min(BEAT_MAX, Math.max(BEAT_MIN, finiteOr(segment.ladder.to, segment.beat))),
+          ...(segment.ladder.carrierTo === undefined
+            ? {}
+            : {
+                carrierTo: Math.min(
+                  CARRIER_MAX,
+                  Math.max(CARRIER_MIN, finiteOr(segment.ladder.carrierTo, segment.carrier)),
+                ),
+              }),
+        }
+      : null
     return {
       ...segment,
       durationSec,
@@ -132,6 +149,7 @@ export function normalizeSegments(segments: SessionSegment[]): SessionSegment[] 
       fadeInSec: Math.max(0, Math.min(durationSec, finiteOr(segment.fadeInSec, 0))),
       fadeOutSec: Math.max(0, Math.min(durationSec, finiteOr(segment.fadeOutSec, 0))),
       transitionSec: Math.max(0, Math.min(60, finiteOr(segment.transitionSec, 6))),
+      ladder,
     }
   })
 }

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { clampBeat, clampCarrier, DEFAULT_BREATH_PATTERN } from '../config/audio'
 import { createStarterSession } from '../config/sessions'
-import { isThemeId } from '../config/themes'
+import { isThemeId, THEMES } from '../config/themes'
 import { isLanguageCode } from '../language/types'
 import { translate } from '../language'
 import type { LanguageCode } from '../language'
@@ -89,6 +89,8 @@ export interface NocturneState {
   activeMixId: string | null
   ambienceCategoryFilter: AmbienceCategory | 'all' | 'favorites'
   ambienceSearchQuery: string
+  /** When set, choosing an atmosphere also applies its soundscape. */
+  atmosphereDrivesSoundscape: boolean
 
   setLanguage: (language: LanguageCode) => void
   setTheme: (theme: ThemeId) => void
@@ -116,6 +118,7 @@ export interface NocturneState {
   deleteUserMix: (id: string) => void
   setAmbienceCategoryFilter: (category: AmbienceCategory | 'all' | 'favorites') => void
   setAmbienceSearchQuery: (query: string) => void
+  setAtmosphereDrivesSoundscape: (enabled: boolean) => void
   setBreathRunning: (running: boolean) => void
   setBreathPattern: (patch: Partial<BreathPattern>) => void
   setBreathCues: (enabled: boolean) => void
@@ -212,14 +215,20 @@ export const useNocturneStore = create<NocturneState>()(
       activeMixId: null,
       ambienceCategoryFilter: 'all',
       ambienceSearchQuery: '',
+      atmosphereDrivesSoundscape: true,
 
       setLanguage: (language) => set({ language }),
 
       setTheme: (theme) =>
-        set({
+        set((state) => ({
           theme,
           ambientProfile: theme,
-        }),
+          // An atmosphere carries its own soundscape with it, so the room
+          // keeps its light and its sound in step.
+          ambienceTrackVolumes: state.atmosphereDrivesSoundscape
+            ? { ...THEMES[theme].soundscape.tracks }
+            : state.ambienceTrackVolumes,
+        })),
 
       setAmbientProfile: (ambientProfile) => set({ ambientProfile }),
 
@@ -388,6 +397,8 @@ export const useNocturneStore = create<NocturneState>()(
 
       setAmbienceSearchQuery: (ambienceSearchQuery) =>
         set({ ambienceSearchQuery }),
+      setAtmosphereDrivesSoundscape: (atmosphereDrivesSoundscape) =>
+        set({ atmosphereDrivesSoundscape }),
       setBreathRunning: (breathRunning) => set({ breathRunning }),
       setBreathPattern: (patch) =>
         set((state) => ({ breathPattern: { ...state.breathPattern, ...patch } })),
@@ -486,6 +497,7 @@ export const useNocturneStore = create<NocturneState>()(
         ambienceFavorites: state.ambienceFavorites,
         userMixes: state.userMixes,
         activeMixId: state.activeMixId,
+        atmosphereDrivesSoundscape: state.atmosphereDrivesSoundscape,
       }),
       merge: (persisted, current) => {
         if (!persisted || typeof persisted !== 'object') return current
@@ -527,6 +539,10 @@ export const useNocturneStore = create<NocturneState>()(
           userMixes: Array.isArray(saved.userMixes) ? saved.userMixes : current.userMixes,
           activeMixId:
             typeof saved.activeMixId === 'string' ? saved.activeMixId : current.activeMixId,
+          atmosphereDrivesSoundscape:
+            typeof saved.atmosphereDrivesSoundscape === 'boolean'
+              ? saved.atmosphereDrivesSoundscape
+              : current.atmosphereDrivesSoundscape,
           experienceStarted: false,
           mode: 'ambient',
           audioStatus: 'idle',

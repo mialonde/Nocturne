@@ -1,6 +1,12 @@
 import { useMemo } from 'react'
 import { ChevronDown, ChevronUp, Headphones, Trash2, Wind } from 'lucide-react'
-import { AMBIENT_PROFILE_NAMES, computeBinauralPair, formatHz } from '../../config/audio'
+import {
+  AMBIENT_PROFILE_NAMES,
+  LADDER_PRESETS,
+  computeBinauralPair,
+  findLadderPreset,
+  formatHz,
+} from '../../config/audio'
 import { AMBIENCE_SOUND_LIST, AMBIENCE_SOUNDS, PRESET_MIXES, type AmbienceSoundId } from '../../config/ambience'
 import { THEMES, THEME_LIST, isThemeId } from '../../config/themes'
 import { useNocturneStore } from '../../store/useNocturneStore'
@@ -34,6 +40,9 @@ export function SessionSegmentCard({
   const userMixes = useNocturneStore((state) => state.userMixes)
   const pair = computeBinauralPair(segment.carrier, segment.beat)
   const theme = THEMES[segment.theme]
+  const ladderValue = segment.ladder
+    ? (findLadderPreset(segment.ladder.to)?.id ?? 'custom')
+    : 'none'
   const updateBreath = (patch: Partial<BreathPattern>) =>
     onChange({ breathPattern: { ...segment.breathPattern, ...patch } })
 
@@ -64,6 +73,7 @@ export function SessionSegmentCard({
             <span>
               {formatLongDuration(segment.durationSec)} · {theme.name} · {soundscapeLabel} · {Math.round(segment.carrier)} Hz
               {segment.binaural ? ` / Δ ${formatHz(pair.beat, 1)}` : ''}
+              {segment.ladder ? ` → ${formatHz(segment.ladder.to, 1)}` : ''}
             </span>
           </span>
           <span className="segment-card__badges">
@@ -206,6 +216,54 @@ export function SessionSegmentCard({
               format={(value) => formatHz(value, 1)}
             />
           </div>
+
+          <div className="segment-editor__grid segment-editor__grid--two">
+            <SelectField
+              label="Beat slide"
+              value={ladderValue}
+              options={[
+                { value: 'none', label: 'Steady · no slide' },
+                ...LADDER_PRESETS.map((preset) => ({
+                  value: preset.id,
+                  label: `${preset.nameEn} · ${preset.to} Hz`,
+                })),
+                ...(ladderValue === 'custom'
+                  ? [{ value: 'custom', label: 'Custom' }]
+                  : []),
+              ]}
+              onChange={(value) => {
+                if (value === 'none') {
+                  onChange({ ladder: null })
+                  return
+                }
+                if (value === 'custom') {
+                  onChange({ ladder: { to: segment.ladder?.to ?? segment.beat } })
+                  return
+                }
+                const preset = LADDER_PRESETS.find((item) => item.id === value)
+                if (preset) onChange({ ladder: { to: preset.to } })
+              }}
+            />
+            {segment.ladder ? (
+              <NumberField
+                label="Slide to"
+                value={segment.ladder.to}
+                min={0.5}
+                max={40}
+                step={0.5}
+                suffix="Hz"
+                onChange={(to) => onChange({ ladder: { ...segment.ladder!, to } })}
+              />
+            ) : null}
+          </div>
+
+          {segment.ladder ? (
+            <p className="control-hint">
+              The beat difference slides from {formatHz(segment.beat, 1)} to{' '}
+              {formatHz(segment.ladder.to, 1)} across this passage. The ramp is scheduled in the
+              audio thread, so it stays smooth whatever the room is doing.
+            </p>
+          ) : null}
 
           <div className="segment-editor__toggles">
             <Toggle

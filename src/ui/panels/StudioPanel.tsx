@@ -17,6 +17,7 @@ import { useNocturneStore } from '../../store/useNocturneStore'
 import { Segmented, Toggle } from '../components/controls'
 import { formatBytes, formatDurationMs } from '../format'
 import { useRecordingSnapshot } from '../hooks/useRecordingSnapshot'
+import { useAudioExportSnapshot } from '../hooks/useAudioExportSnapshot'
 import { PanelNote, PanelSection } from './PanelSection'
 import { PanelShell } from './PanelShell'
 
@@ -43,6 +44,7 @@ export function StudioPanel() {
   const settings = useNocturneStore((state) => state.recording)
   const updateRecording = useNocturneStore((state) => state.updateRecording)
   const snapshot = useRecordingSnapshot(runtime.recording)
+  const audioExport = useAudioExportSnapshot(runtime.audioExporter)
   const support = runtime.recording.getSupport(settings.includeAudio)
   const busy =
     snapshot.phase === 'preparing' ||
@@ -271,6 +273,80 @@ export function StudioPanel() {
             </div>
           </div>
         </div>
+      </PanelSection>
+
+      <PanelSection title="Audio only" eyebrow="Master bus as a WAV file">
+        {audioExport.phase === 'recording' ? (
+          <div className="recording-live-card">
+            <div className="recording-live-card__status">
+              <span className="recording-live-card__dot" aria-hidden="true" />
+              <div>
+                <span>Recording audio</span>
+                <strong>{formatDurationMs(audioExport.elapsedMs)}</strong>
+              </div>
+            </div>
+            <div className="button-row">
+              <button
+                type="button"
+                className="button button--primary"
+                onClick={() => void runtime.stopAudioExport()}
+              >
+                <CircleStop size={15} strokeWidth={1.5} aria-hidden="true" />
+                End audio take
+              </button>
+            </div>
+          </div>
+        ) : audioExport.phase === 'processing' ? (
+          <div className="recording-preparing">
+            <LoaderCircle className="spin" size={18} strokeWidth={1.4} aria-hidden="true" />
+            <span>Writing the WAV file…</span>
+          </div>
+        ) : audioExport.phase === 'ready' && audioExport.result ? (
+          <div>
+            <div className="result-meta">
+              <span>{formatDurationMs(audioExport.result.durationMs)}</span>
+              <span>{formatBytes(audioExport.result.bytes)}</span>
+              <span>Stereo</span>
+              <span>WAV 16 bit</span>
+            </div>
+            <p className="result-file">{audioExport.result.fileName}</p>
+            <div className="button-row">
+              <a
+                className="button button--primary"
+                href={audioExport.result.url}
+                download={audioExport.result.fileName}
+              >
+                <Download size={15} strokeWidth={1.5} aria-hidden="true" />
+                Download WAV
+              </a>
+              <button
+                type="button"
+                className="button button--ghost"
+                onClick={() => runtime.discardAudioExport()}
+              >
+                <Trash2 size={14} strokeWidth={1.5} aria-hidden="true" />
+                Discard
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {audioExport.error ? <PanelNote tone="warning">{audioExport.error}</PanelNote> : null}
+            <button
+              type="button"
+              className="button button--outline"
+              disabled={busy}
+              onClick={() => void runtime.startAudioExport()}
+            >
+              <AudioLines size={15} strokeWidth={1.5} aria-hidden="true" />
+              Record audio only
+            </button>
+            <p className="control-hint">
+              The same post-limiter signal as the video take, without the picture. Useful for a
+              sound bed, a podcast or an audio editor.
+            </p>
+          </>
+        )}
       </PanelSection>
 
       {result ? (

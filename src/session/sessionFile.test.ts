@@ -9,6 +9,29 @@ import {
 } from './sessionFile'
 
 describe('session file exchange', () => {
+  it('preserves ambience profiles and frequency ladders on round trip', () => {
+    const session = createStarterSession()
+    session.segments[0].ambientProfile = 'rain'
+    session.segments[0].ladder = { to: 6, carrierTo: 180 }
+    session.segments[1].ambientProfile = 'user_mix_123'
+    const restored = parseSessionFile(serializeSession(session))
+    expect(restored.segments).toEqual(session.segments)
+  })
+
+  it('rejects unsupported versions instead of silently dropping future fields', () => {
+    const envelope = JSON.parse(serializeSession(createStarterSession()))
+    envelope.version = 2
+    expect(() => parseSessionFile(JSON.stringify(envelope))).toThrow('version is not supported')
+  })
+
+  it('normalizes ladder targets and ignores malformed ladders', () => {
+    const session = createStarterSession()
+    session.segments[0].ladder = { to: 900, carrierTo: -10 }
+    session.segments[1].ladder = { to: 'wrong' } as never
+    const restored = parseSessionFile(serializeSession(session))
+    expect(restored.segments[0].ladder).toEqual({ to: 40, carrierTo: 100 })
+    expect(restored.segments[1].ladder).toBeNull()
+  })
   it('wraps and restores a session with a new local identity', () => {
     const original = createStarterSession()
     const raw = serializeSession(original)

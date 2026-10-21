@@ -171,6 +171,34 @@ export class BinauralAudioEngine {
     this.config.beat = beat
   }
 
+  /**
+   * Slides the pair from one beat difference to another across a passage.
+   *
+   * The ramp lives in the audio thread, so a long slide costs nothing in the
+   * interface and keeps its shape even when the page is busy.
+   */
+  setLadder(
+    from: { carrier: number; beat: number },
+    to: { carrier: number; beat: number },
+    seconds: number,
+  ): void {
+    if (this.disposed) return
+    const now = this.context.currentTime
+    const duration = Math.max(0.5, Math.min(3600, seconds))
+    const start = computeBinauralPair(from.carrier, from.beat)
+    const end = computeBinauralPair(to.carrier, to.beat)
+
+    this.oscillatorLeft.frequency.cancelScheduledValues(now)
+    this.oscillatorRight.frequency.cancelScheduledValues(now)
+    this.oscillatorLeft.frequency.setValueAtTime(start.left, now)
+    this.oscillatorRight.frequency.setValueAtTime(start.right, now)
+    this.oscillatorLeft.frequency.linearRampToValueAtTime(end.left, now + duration)
+    this.oscillatorRight.frequency.linearRampToValueAtTime(end.right, now + duration)
+
+    this.config.carrier = from.carrier
+    this.config.beat = from.beat
+  }
+
   getFrequencyPair(): FrequencyPair {
     return {
       left: this.oscillatorLeft.frequency.value,

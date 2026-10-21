@@ -137,3 +137,56 @@ export function presetForBeat(beat: number): FrequencyPreset | null {
 export function getBreathCycleDuration(pattern: BreathPattern): number {
   return Math.max(0.1, pattern.inhale + pattern.hold + pattern.exhale + pattern.rest)
 }
+
+export interface LadderPreset {
+  id: string
+  name: string
+  nameEn: string
+  /** Beat difference at the end of the passage. */
+  to: number
+  description: string
+  descriptionEn: string
+}
+
+/**
+ * Ready-made slides across the beat difference. The passage always starts at
+ * its own beat value and slides towards the target of the preset.
+ */
+export const LADDER_PRESETS: LadderPreset[] = [
+  {
+    id: 'alpha_theta',
+    name: 'Alfa → Teta',
+    nameEn: 'Alpha → Theta',
+    to: 6,
+    description: 'Sakin uyanıklıktan düşüncelere geçiş',
+    descriptionEn: 'From relaxed wakefulness into reverie',
+  },
+  {
+    id: 'alpha_delta',
+    name: 'Alfa → Delta',
+    nameEn: 'Alpha → Delta',
+    to: 3,
+    description: 'Yavaşlayan, derinleşen bir iniş',
+    descriptionEn: 'A slow, deepening descent',
+  },
+  {
+    id: 'theta_delta',
+    name: 'Teta → Delta',
+    nameEn: 'Theta → Delta',
+    to: 2,
+    description: 'Uykuya geçiş için alçalan fark',
+    descriptionEn: 'A falling difference for the edge of sleep',
+  },
+  {
+    id: 'beta_alpha',
+    name: 'Beta → Alfa',
+    nameEn: 'Beta → Alpha',
+    to: 10,
+    description: 'Dağınık zihinden sakin uyanıklığa',
+    descriptionEn: 'From a scattered mind to calm wakefulness',
+  },
+]
+
+export function findLadderPreset(to: number): LadderPreset | null {
+  return LADDER_PRESETS.find((preset) => Math.abs(preset.to - to) < 0.05) ?? null
+}

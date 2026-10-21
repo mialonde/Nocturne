@@ -11,6 +11,9 @@ import {
 import { AudioEngine } from '../audio/AudioEngine'
 import { computeBinauralPair } from '../config/audio'
 import { THEMES } from '../config/themes'
+import { clearMediaSession, updateMediaSession } from '../platform/mediaSession'
+import { ScreenAwake } from '../platform/screenAwake'
+import { AudioExporter } from '../recording/AudioExporter'
 import { RecordingEngine } from '../recording/RecordingEngine'
 import { SessionPlayer } from '../session/SessionPlayer'
 import { useNocturneStore } from '../store/useNocturneStore'
@@ -23,6 +26,7 @@ import type {
 export interface NocturneRuntime {
   audio: AudioEngine
   recording: RecordingEngine
+  audioExporter: AudioExporter
   environment: Environment3D | null
   stageError: string | null
   isFullscreen: boolean
@@ -37,6 +41,9 @@ export interface NocturneRuntime {
   disableMicrophone: () => void
   toggleFullscreen: () => Promise<void>
   startRecording: () => Promise<void>
+  startAudioExport: () => Promise<void>
+  stopAudioExport: () => Promise<void>
+  discardAudioExport: () => void
   getBreathState: () => BreathState | null
 }
 
@@ -64,6 +71,8 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
   const [recording] = useState<RecordingEngine>(
     () => new RecordingEngine(audio, () => environmentRef.current),
   )
+  const [audioExporter] = useState<AudioExporter>(() => new AudioExporter(audio))
+  const [screenAwake] = useState<ScreenAwake>(() => new ScreenAwake())
   const beginPromiseRef = useRef<Promise<void> | null>(null)
   const captureErrorRef = useRef(0)
 
@@ -252,6 +261,31 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     return environmentRef.current?.getBreathState() ?? null
   }, [])
 
+  const startAudioExport = useCallback(async (): Promise<void> => {
+    const state = useNocturneStore.getState()
+    if (!state.experienceStarted) {
+      await beginExperience()
+    }
+    if (!audio.isPlaying()) {
+      try {
+        await audio.start(1.2)
+        useNocturneStore.getState().setAudioStatus('playing')
+      } catch (error) {
+        useNocturneStore.getState().showToast('The audio bus could not be opened.', 'error')
+        return
+      }
+    }
+    await audioExporter.start()
+  }, [audio, audioExporter, beginExperience])
+
+  const stopAudioExport = useCallback(async (): Promise<void> => {
+    await audioExporter.stop()
+  }, [audioExporter])
+
+  const discardAudioExport = useCallback((): void => {
+    audioExporter.discard()
+  }, [audioExporter])
+
   // Create the visual stage once. Audio is deliberately silent until a gesture.
   useEffect(() => {
     const host = stageHostRef.current
@@ -384,6 +418,80 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
   }, [])
 
+  // Keep the display awake while the room plays, and publish the room to the
+  // operating system media session so the lock screen can control it.
+  useEffect(() => {
+    const transport = {
+      onPlay: () => void togglePlayback(),
+      onPause: () => void togglePlayback(),
+      onStop: () => stopAll(),
+    }
+
+    const publish = () => {
+      const state = useNocturneStore.getState()
+      const playing = state.audioStatus === 'playing'
+      void screenAwake.setEnabled(playing)
+
+      const playback = state.sessionPlayback
+      if (playback.status !== 'idle') {
+        updateMediaSession(
+          {
+            title: playback.sessionName || 'NOCTURNE',
+            artist: 'NOCTURNE',
+            album: playback.segmentLabel,
+            playing,
+            positionMs: playback.elapsedMs,
+            durationMs: playback.totalMs,
+            seekable: false,
+          },
+          transport,
+        )
+        return
+      }
+
+      if (playing) {
+        updateMediaSession(
+          {
+            title: 'NOCTURNE',
+            artist: 'Ambient room',
+            album: 'A room between states',
+            playing: true,
+            positionMs: 0,
+            durationMs: 0,
+            seekable: false,
+          },
+          transport,
+        )
+        return
+      }
+
+      clearMediaSession()
+    }
+
+    publish()
+    const unsubscribe = useNocturneStore.subscribe((state, previous) => {
+      if (
+        state.audioStatus !== previous.audioStatus ||
+        state.sessionPlayback !== previous.sessionPlayback
+      ) {
+        publish()
+      }
+    })
+    return () => {
+      unsubscribe()
+      void screenAwake.setEnabled(false)
+    }
+  }, [screenAwake, stopAll, togglePlayback])
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) return
+      void screenAwake.refresh()
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [screenAwake])
+
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden) return
@@ -405,14 +513,16 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     return () => {
       sessionPlayer.dispose()
       recording.dispose()
+      audioExporter.dispose()
       audio.dispose()
     }
-  }, [audio, recording, sessionPlayer])
+  }, [audio, audioExporter, recording, sessionPlayer])
 
   const value = useMemo<NocturneRuntime>(
     () => ({
       audio,
       recording,
+      audioExporter,
       environment,
       stageError,
       isFullscreen,
@@ -427,11 +537,15 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
       disableMicrophone,
       toggleFullscreen,
       startRecording,
+      startAudioExport,
+      stopAudioExport,
+      discardAudioExport,
       getBreathState,
     }),
     [
       audio,
       recording,
+      audioExporter,
       environment,
       stageError,
       isFullscreen,
@@ -446,6 +560,9 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
       disableMicrophone,
       toggleFullscreen,
       startRecording,
+      startAudioExport,
+      stopAudioExport,
+      discardAudioExport,
       getBreathState,
     ],
   )

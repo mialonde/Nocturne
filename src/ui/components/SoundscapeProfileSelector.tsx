@@ -43,7 +43,7 @@ import {
   type AmbienceSoundId,
 } from '../../config/ambience'
 import { hasAmbienceSample } from '../../config/ambienceSamples'
-import { isThemeId } from '../../config/themes'
+import { isThemeId, THEMES } from '../../config/themes'
 import { useTranslation } from '../../language/useTranslation'
 import { useNocturneRuntime } from '../../runtime/NocturneRuntime'
 import { useNocturneStore } from '../../store/useNocturneStore'
@@ -68,6 +68,7 @@ export function SoundscapeProfileSelector() {
   const runtime = useNocturneRuntime()
   const ambientProfile = useNocturneStore((state) => state.ambientProfile)
   const setAmbientProfile = useNocturneStore((state) => state.setAmbientProfile)
+  const setTheme = useNocturneStore((state) => state.setTheme)
   const ambienceTrackVolumes = useNocturneStore((state) => state.ambienceTrackVolumes)
   const setAmbienceTrackVolume = useNocturneStore((state) => state.setAmbienceTrackVolume)
   const toggleAmbienceTrack = useNocturneStore((state) => state.toggleAmbienceTrack)
@@ -193,13 +194,16 @@ export function SoundscapeProfileSelector() {
   const handleSelectClassicTheme = async (themeId: string) => {
     await ensurePlaying()
     if (isThemeId(themeId)) {
+      // The atmosphere carries its own soundscape when the setting allows it.
+      setTheme(themeId)
+    } else {
       setAmbientProfile(themeId)
-      const theme = CLASSIC_THEME_PROFILES.find((profile) => profile.id === themeId)
-      showToast(
-        t('ambience.toast.soundscape', { name: theme?.nameEn ?? themeId.toUpperCase() }),
-        'quiet',
-      )
     }
+    const theme = CLASSIC_THEME_PROFILES.find((profile) => profile.id === themeId)
+    showToast(
+      t('ambience.toast.soundscape', { name: theme?.nameEn ?? themeId.toUpperCase() }),
+      'quiet',
+    )
   }
 
   const handleSelectPresetMix = async (mix: AmbienceMix) => {
@@ -676,6 +680,9 @@ export function SoundscapeProfileSelector() {
                               {isSelected && <Check size={13} className="soundscape-check" />}
                             </div>
                             <p className="soundscape-card__desc">{theme.descriptionEn}</p>
+                            <span className="soundscape-card__character">
+                              {isThemeId(theme.id) ? THEMES[theme.id].soundscape.note : theme.category}
+                            </span>
                           </div>
                         </div>
                       </div>
