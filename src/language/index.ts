@@ -1,15 +1,24 @@
 import { en } from './en'
+import { tr } from './tr'
+import { ru } from './ru'
+import { ar } from './ar'
+import { ja } from './ja'
+import { zh } from './zh'
 import type { LanguageCode, TranslationValues } from './types'
 import type { Messages, TranslationKey } from './en'
 
 export const DEFAULT_LANGUAGE: LanguageCode = 'en'
 
 /**
- * Add a locale by creating `xx.ts` with the same `TranslationKey` shape,
- * importing it here, and adding its code to `LANGUAGES` in `types.ts`.
+ * All active locales in Nocturne.
  */
 export const LOCALES: Record<LanguageCode, Messages> = {
   en,
+  tr,
+  ru,
+  ar,
+  ja,
+  zh,
 }
 
 function interpolate(message: string, values?: TranslationValues): string {

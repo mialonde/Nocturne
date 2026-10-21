@@ -12,6 +12,7 @@ import type { PanelId } from '../types'
 import { useTranslation } from '../language/useTranslation'
 import { useNocturneRuntime } from '../runtime/NocturneRuntime'
 import { useNocturneStore } from '../store/useNocturneStore'
+import { useMemo } from 'react'
 import { useRecordingSnapshot } from './hooks/useRecordingSnapshot'
 
 export function Dock() {
@@ -22,6 +23,7 @@ export function Dock() {
   const togglePanel = useNocturneStore((state) => state.togglePanel)
   const sessionActive = useNocturneStore((state) => state.sessionPlayback.status !== 'idle')
   const recording = useRecordingSnapshot(runtime.recording)
+  const ambienceTrackVolumes = useNocturneStore((state) => state.ambienceTrackVolumes)
   const playing = audioStatus === 'playing'
   const starting = audioStatus === 'starting'
   const canStop = playing || starting || sessionActive
@@ -29,6 +31,11 @@ export function Dock() {
     recording.phase === 'recording' ||
     recording.phase === 'paused' ||
     recording.phase === 'processing'
+
+  const activeAmbienceCount = useMemo(
+    () => Object.values(ambienceTrackVolumes).filter((vol) => (vol ?? 0) > 0.001).length,
+    [ambienceTrackVolumes],
+  )
 
   const panelButtons: { id: PanelId; label: string; Icon: typeof SlidersHorizontal }[] = [
     { id: 'sound', label: t('dock.sound'), Icon: SlidersHorizontal },
@@ -81,6 +88,15 @@ export function Dock() {
           >
             <Icon size={17} strokeWidth={1.4} aria-hidden="true" />
             <span>{label}</span>
+            {id === 'sound' && activeAmbienceCount > 0 ? (
+              <span
+                className="dock__badge"
+                aria-label={t('dock.activeLayers', { count: activeAmbienceCount })}
+                title={t('dock.activeLayers', { count: activeAmbienceCount })}
+              >
+                {activeAmbienceCount}
+              </span>
+            ) : null}
             {id === 'studio' && recordingActive ? (
               <span
                 className="dock__record-dot"

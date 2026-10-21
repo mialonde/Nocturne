@@ -128,6 +128,7 @@ export interface NocturneState {
   setSessionPlayback: (patch: Partial<SessionPlaybackState>) => void
   resetSessionPlayback: () => void
   setSleepTimer: (minutes: number) => void
+  extendSleepTimer: (additionalMinutes: number) => void
   updateSleepTimer: (patch: Partial<SleepTimerState>) => void
   clearSleepTimer: () => void
   setFullscreenShortcut: (shortcut: FullscreenShortcut) => void
@@ -419,6 +420,21 @@ export const useNocturneStore = create<NocturneState>()(
           },
         })
       },
+      extendSleepTimer: (additionalMinutes) =>
+        set((state) => {
+          if (!state.sleepTimer.endsAt) return {}
+          const safeAdd = Math.max(1, Math.round(additionalMinutes))
+          const addMs = safeAdd * 60_000
+          const endsAt = state.sleepTimer.endsAt + addMs
+          const remainingMs = Math.max(0, endsAt - Date.now())
+          return {
+            sleepTimer: {
+              endsAt,
+              minutes: Math.round(remainingMs / 60_000),
+              remainingMs,
+            },
+          }
+        }),
       updateSleepTimer: (patch) =>
         set((state) => ({ sleepTimer: { ...state.sleepTimer, ...patch } })),
       clearSleepTimer: () => set({ sleepTimer: idleSleepTimer() }),

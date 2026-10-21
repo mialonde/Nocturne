@@ -77,7 +77,7 @@
     padding: 0;
   }
 
-  .dock__panel > span:not(.dock__record-dot) {
+  .dock__panel > span:not(.dock__record-dot):not(.dock__badge) {
     display: none;
   }
 

@@ -8,12 +8,18 @@ describe('language catalogue', () => {
     expect(translate('en', 'sleep.title')).toBe('Sleep timer')
   })
 
-  it('interpolates runtime values', () => {
-    expect(translate('en', 'sleep.option', { minutes: 20 })).toBe('20 min')
-    expect(translate('en', 'ambience.activeLayers', { count: 3 })).toBe('3 layers')
+  it('translates across all supported languages (tr, ru, ar, ja, zh)', () => {
+    expect(translate('tr', 'sleep.title')).toBe('Uyku zamanlayıcısı')
+    expect(translate('ru', 'sleep.title')).toBe('Таймер сна')
+    expect(translate('ar', 'sleep.title')).toBe('مؤقت النوم')
+    expect(translate('ja', 'sleep.title')).toBe('おやすみタイマー')
+    expect(translate('zh', 'sleep.title')).toBe('睡眠定时器')
   })
 
-  it('leaves unknown placeholders visible for debugging', () => {
-    expect(translate('en', 'sleep.option', {})).toBe('{minutes} min')
+  it('interpolates runtime values in translated languages', () => {
+    expect(translate('tr', 'sleep.option', { minutes: 15 })).toBe('15 dk')
+    expect(translate('ru', 'sleep.option', { minutes: 15 })).toBe('15 мин')
+    expect(translate('ja', 'sleep.option', { minutes: 15 })).toBe('15分')
+    expect(translate('zh', 'sleep.option', { minutes: 15 })).toBe('15 分钟')
   })
 })

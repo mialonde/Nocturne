@@ -1,5 +1,7 @@
-import { EyeOff, Keyboard, MonitorUp, RotateCcw, ShieldCheck, SlidersHorizontal } from 'lucide-react'
+import { EyeOff, Globe, Keyboard, MonitorUp, RotateCcw, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState } from 'react'
+import { LANGUAGE_OPTIONS, type LanguageCode } from '../../language/types'
+import { useTranslation } from '../../language/useTranslation'
 import { useNocturneRuntime } from '../../runtime/NocturneRuntime'
 import { useNocturneStore } from '../../store/useNocturneStore'
 import type { FullscreenShortcut, QualitySetting } from '../../types'
@@ -22,7 +24,10 @@ const SHORTCUT_OPTIONS: { value: FullscreenShortcut; label: string }[] = [
 ]
 
 export function SettingsPanel() {
+  const { t } = useTranslation()
   const runtime = useNocturneRuntime()
+  const language = useNocturneStore((state) => state.language)
+  const setLanguage = useNocturneStore((state) => state.setLanguage)
   const visuals = useNocturneStore((state) => state.visuals)
   const updateVisuals = useNocturneStore((state) => state.updateVisuals)
   const shortcut = useNocturneStore((state) => state.fullscreenShortcut)
@@ -99,6 +104,26 @@ export function SettingsPanel() {
           checked={visuals.reducedMotion}
           onChange={(reducedMotion) => updateVisuals({ reducedMotion })}
           description="Calms drift, orbit and camera motion. The breathing guide remains readable."
+        />
+      </PanelSection>
+
+      <PanelSection
+        title={t('settings.language.title')}
+        eyebrow={t('settings.language.eyebrow')}
+        actions={
+          <span className="section-icon" aria-hidden="true">
+            <Globe size={15} strokeWidth={1.4} />
+          </span>
+        }
+      >
+        <SelectField
+          label={t('settings.language.select')}
+          value={language}
+          options={LANGUAGE_OPTIONS.map((opt) => ({
+            value: opt.value,
+            label: `${opt.nativeName} (${opt.label})`,
+          }))}
+          onChange={(value) => setLanguage(value as LanguageCode)}
         />
       </PanelSection>
 

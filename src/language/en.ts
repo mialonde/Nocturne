@@ -69,6 +69,7 @@ export const en = {
   'dock.recordingInProgress': 'Recording in progress',
   'dock.panelLabel': '{name} panel',
   'dock.stopTitle': 'Stop and release audio',
+  'dock.activeLayers': '{count} active ambience layers',
 
   // Panel chrome
   'panel.close': 'Close panel',
@@ -161,6 +162,10 @@ export const en = {
   'sleep.cancelled': 'Cancel sleep timer',
   'sleep.hudTitle': 'Sleep timer active. Open sound controls.',
   'sleep.fadeNote': 'Fade begins 60 seconds before the timer ends.',
+  'sleep.extend': 'Extend',
+  'sleep.extend15': '+15 min',
+  'sleep.extend30': '+30 min',
+  'sleep.extendedToast': 'Sleep timer extended by {minutes} minutes.',
   'sleep.off': 'Off',
 
   // Theme menu
@@ -223,6 +228,9 @@ export const en = {
   // Settings panel (language-ready labels used in the panel)
   'settings.title': 'Settings',
   'settings.eyebrow': 'Room, capture and access',
+  'settings.language.title': 'Language',
+  'settings.language.eyebrow': 'Interface language',
+  'settings.language.select': 'Language',
   'settings.presets.title': 'Experience presets',
   'settings.presets.eyebrow': 'One click, no data lost',
   'settings.presets.copy':
