@@ -424,20 +424,29 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true
     let loading = false
+    let restoreGeneration = 0
     const restoreAudio = () => {
       const state = useNocturneStore.getState()
       if (loading || audio.hasPersonalAudio() || state.audioStatus !== 'playing' || !state.features.personalEnabled) return
       loading = true
+      const generation = restoreGeneration
       void readPersonalAudio().then(async (file) => {
-        if (active && file && !audio.hasPersonalAudio() && useNocturneStore.getState().features.personalEnabled) {
+        const current = useNocturneStore.getState()
+        if (active && generation === restoreGeneration && file && !audio.hasPersonalAudio() && current.audioStatus === 'playing' && current.features.personalEnabled) {
           await audio.loadPersonalAudio(file.blob)
         }
       }).catch((error) => {
         if (active) useNocturneStore.getState().showToast(describeError(error, 'Personal audio could not load.'), 'warning')
-      }).finally(() => { loading = false })
+      }).finally(() => {
+        loading = false
+        if (active && generation !== restoreGeneration) restoreAudio()
+      })
     }
     const unsubscribe = useNocturneStore.subscribe((state, prior) => {
-      if (state.audioStatus !== prior.audioStatus || state.features.personalEnabled !== prior.features.personalEnabled) restoreAudio()
+      if (state.audioStatus !== prior.audioStatus || state.features.personalEnabled !== prior.features.personalEnabled) {
+        restoreGeneration += 1
+        restoreAudio()
+      }
     })
     restoreAudio()
     return () => { active = false; unsubscribe() }

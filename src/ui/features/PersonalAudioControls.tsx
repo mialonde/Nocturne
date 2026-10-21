@@ -25,6 +25,8 @@ export function PersonalAudioControls() {
     setBusy(true); setError('')
     try {
       if (!file.size || file.size > MAX_PERSONAL_AUDIO_BYTES) throw new Error('Maximum audio file size: 20 MB.')
+      // Prevent automatic restoration of the old file racing the new decode.
+      update({ personalEnabled: false })
       await runtime.beginExperience()
       await runtime.audio.loadPersonalAudio(file)
       try { await writePersonalAudio({ name: file.name, blob: file }) } catch (cause) {
@@ -34,7 +36,10 @@ export function PersonalAudioControls() {
       setName(file.name)
       update({ personalEnabled: true })
       useNocturneStore.getState().showToast(copy.loaded, 'quiet')
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Audio could not load.') }
+    } catch (cause) {
+      update({ personalEnabled: features.personalEnabled })
+      setError(cause instanceof Error ? cause.message : 'Audio could not load.')
+    }
     finally { setBusy(false) }
   }
   const remove = async () => {
