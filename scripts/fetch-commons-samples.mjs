@@ -90,10 +90,10 @@ async function collectCommons(source, downloaded) {
     rawUrl: info.url,
     descriptionUrl: info.descriptionUrl,
     title: info.title.replace(/^File:/, '').replace(/\.[^.]+$/, ''),
-    author: info.artist,
+    author: displayAuthor(info.artist),
     credit: info.credit,
-    license: info.license,
-    licenseUrl: info.licenseUrl,
+    license: displayLicense(info.license),
+    licenseUrl: canonicalLicenseUrl(info.licenseUrl || info.license),
     usageTerms: info.usageTerms,
     attributionRequired: info.attributionRequired,
     sourceDuration: info.duration,
@@ -123,10 +123,10 @@ async function collectArchive(source, downloaded) {
     rawUrl: file.url,
     descriptionUrl: item.descriptionUrl,
     title: item.title,
-    author: item.creator,
+    author: displayAuthor(item.creator),
     credit: item.identifier,
-    license: item.license,
-    licenseUrl: item.licenseUrl,
+    license: displayLicense(item.license),
+    licenseUrl: canonicalLicenseUrl(item.license),
     usageTerms: '',
     attributionRequired: false,
     sourceDuration: 0,
@@ -175,6 +175,47 @@ async function downloadOnce(url, rawPath, expectedSha1, downloaded) {
 
 function relative(path) {
   return path.replace(`${root}\\`, '').replace(`${root}/`, '')
+}
+
+/**
+ * Turns a licence name or URL into a short label the interface can show.
+ */
+export function displayLicense(license) {
+  const value = String(license ?? '').trim()
+  if (/publicdomain\/zero/i.test(value)) return 'CC0 1.0'
+  if (/publicdomain\/mark/i.test(value)) return 'Public Domain Mark 1.0'
+  if (/licenses\/publicdomain/i.test(value)) return 'Public Domain'
+  if (/^cc0$/i.test(value)) return 'CC0 1.0'
+  return value
+}
+
+/** Points the licence link at the canonical deed page. */
+export function canonicalLicenseUrl(license) {
+  const value = String(license ?? '').trim()
+  if (/publicdomain\/zero/i.test(value)) {
+    return 'https://creativecommons.org/publicdomain/zero/1.0/'
+  }
+  if (/publicdomain\/mark|licenses\/publicdomain/i.test(value)) {
+    return 'https://creativecommons.org/publicdomain/mark/1.0/'
+  }
+  return value
+}
+
+/**
+ * Some sources list a profile URL instead of a name. The last path segment
+ * is the readable part of it.
+ */
+export function displayAuthor(artist) {
+  const value = String(artist ?? '').trim()
+  if (!value || value.toLowerCase() === 'unknown') return 'Unknown'
+  if (!/^https?:\/\//i.test(value)) return value
+  try {
+    const url = new URL(value)
+    const name = url.pathname.split('/').filter(Boolean).pop() ?? url.hostname
+    return `${name} (${url.hostname.replace(/^www\./, '')})`
+  } catch {
+    return value
+  }
 }
 
 function assertRedistributable(id, license) {
