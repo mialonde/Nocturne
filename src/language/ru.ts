@@ -223,6 +223,8 @@ export const ru: Messages = {
   // Soundscape labels
   'ambience.toast.soundscape': 'Звуковой пейзаж: {name}',
   'ambience.presetMix': 'Готовый микс',
+  'ambience.recording': 'Запись',
+  'ambience.recordingHint': 'Воспроизводит полевую запись с открытой лицензией.',
 
   // Settings panel
   'settings.title': 'Настройки',

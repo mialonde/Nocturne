@@ -223,6 +223,8 @@ export const ja: Messages = {
   // Soundscape labels
   'ambience.toast.soundscape': 'サウンドスケープ: {name}',
   'ambience.presetMix': 'プリセットミックス',
+  'ambience.recording': '録音',
+  'ambience.recordingHint': 'オープンライセンスのフィールド録音を再生します。',
 
   // Settings panel
   'settings.title': '設定',

@@ -304,6 +304,16 @@ export function SoundscapeProfileSelector() {
           <div className="soundscape-card__texts">
             <div className="soundscape-card__title-row">
               <span className="soundscape-card__title">{name}</span>
+              {hasAmbienceSample(sound.id) && (
+                <span
+                  className="soundscape-card__badge"
+                  title={t('ambience.recordingHint')}
+                  aria-label={t('ambience.recordingHint')}
+                >
+                  <Radio size={9} strokeWidth={1.8} aria-hidden="true" />
+                  {t('ambience.recording')}
+                </span>
+              )}
               {isPlaying && <Check size={13} className="soundscape-check" />}
             </div>
             <p className="soundscape-card__desc">{sound.descriptionEn}</p>

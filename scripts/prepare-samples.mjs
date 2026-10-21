@@ -71,12 +71,23 @@ async function measure(input) {
     'null',
     '-',
   ])
-  const start = stderr.lastIndexOf('{')
-  const end = stderr.lastIndexOf('}')
-  if (start === -1 || end === -1) {
-    throw new Error(`Could not read the loudness analysis of ${input}`)
+
+  // The analyser prints one JSON object at the end of the log. Other tools in
+  // the same log may also print braces, so every candidate is tried.
+  for (let index = stderr.lastIndexOf('{'); index !== -1; index = stderr.lastIndexOf('{', index - 1)) {
+    const end = stderr.indexOf('}', index)
+    if (end === -1) break
+    try {
+      const parsed = JSON.parse(stderr.slice(index, end + 1))
+      if (parsed && typeof parsed === 'object' && 'input_i' in parsed) {
+        return parsed
+      }
+    } catch {
+      // Not the analyser output; keep looking.
+    }
   }
-  return JSON.parse(stderr.slice(start, end + 1))
+
+  throw new Error(`Could not read the loudness analysis of ${input}`)
 }
 
 function escapeForSingleQuotes(value) {
@@ -109,10 +120,11 @@ async function main() {
     console.log(`  trim ${source.trim.start}s +${source.trim.duration}s, crossfade ${crossfade}s`)
 
     // 1. Trim and fold the tail into the head.
+    //    The recording is opened twice: `acrossfade` needs two independent
+    //    streams, a split of one source would break the overlap.
     const filter = [
-      `[0:a]atrim=start=${source.trim.start}:duration=${source.trim.duration},asetpts=PTS-STARTPTS,split[a][b]`,
-      `[a]atrim=0:${bodyLength},asetpts=PTS-STARTPTS[body]`,
-      `[b]atrim=0:${crossfade},asetpts=PTS-STARTPTS[head]`,
+      `[0:a]atrim=start=${source.trim.start}:duration=${bodyLength},asetpts=PTS-STARTPTS[body]`,
+      `[1:a]atrim=start=${source.trim.start}:duration=${crossfade},asetpts=PTS-STARTPTS[head]`,
       `[body][head]acrossfade=d=${crossfade}:c1=qsin:c2=qsin[loop]`,
       `[loop]aformat=sample_fmts=fltp:sample_rates=${SAMPLE_RATE}:channel_layouts=${source.channels ?? 'stereo'}[out]`,
     ].join(';')
@@ -121,6 +133,8 @@ async function main() {
       '-hide_banner',
       '-nostats',
       '-y',
+      '-i',
+      rawPath,
       '-i',
       rawPath,
       '-filter_complex',

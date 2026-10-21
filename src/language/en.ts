@@ -224,6 +224,8 @@ export const en = {
   // Soundscape labels
   'ambience.toast.soundscape': 'Soundscape: {name}',
   'ambience.presetMix': 'Preset mix',
+  'ambience.recording': 'Recording',
+  'ambience.recordingHint': 'Plays an open-licensed field recording.',
 
   // Settings panel (language-ready labels used in the panel)
   'settings.title': 'Settings',

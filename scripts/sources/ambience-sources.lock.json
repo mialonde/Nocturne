@@ -1,9 +1,13 @@
 {
-  "generatedAt": "2026-10-21T06:16:46.193Z",
-  "provider": "Wikimedia Commons",
+  "generatedAt": "2026-10-21T06:33:54.332Z",
+  "providers": [
+    "Wikimedia Commons",
+    "archive.org"
+  ],
   "entries": [
     {
       "id": "rain",
+      "provider": "commons",
       "rawFile": "assets\\ambient-raw\\rain.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Light_Rain_Distant_Thunder_July_5th_2016.wav",
@@ -20,7 +24,8 @@
     },
     {
       "id": "distant_thunder",
-      "rawFile": "assets\\ambient-raw\\distant_thunder.wav",
+      "provider": "commons",
+      "rawFile": "assets\\ambient-raw\\rain.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Light_Rain_Distant_Thunder_July_5th_2016.wav",
       "title": "Light Rain Distant Thunder July 5th 2016",
@@ -36,6 +41,7 @@
     },
     {
       "id": "wind",
+      "provider": "commons",
       "rawFile": "assets\\ambient-raw\\wind.ogg",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
@@ -52,6 +58,7 @@
     },
     {
       "id": "ocean",
+      "provider": "commons",
       "rawFile": "assets\\ambient-raw\\ocean.ogg",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/6/64/Ocean_Waves_on_a_Tropical_Beach.ogg",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Ocean_Waves_on_a_Tropical_Beach.ogg",
@@ -68,6 +75,7 @@
     },
     {
       "id": "forest",
+      "provider": "commons",
       "rawFile": "assets\\ambient-raw\\forest.wav",
       "rawUrl": "https://upload.wikimedia.org/wikipedia/commons/9/97/Birds_on_Vieux_Limoilou%2C_Qu%C3%A9bec_ville.wav",
       "descriptionUrl": "https://commons.wikimedia.org/wiki/File:Birds_on_Vieux_Limoilou,_Qu%C3%A9bec_ville.wav",
@@ -81,6 +89,23 @@
       "sourceDuration": 398.46920634920633,
       "sha1": "da5e825cb1ae76d04eb0d98b390d0ba0794e45a6",
       "bytes": 70290012
+    },
+    {
+      "id": "fireplace",
+      "provider": "archive",
+      "rawFile": "assets\\ambient-raw\\fireplace.mp3",
+      "rawUrl": "https://archive.org/download/aporee_43670_49721/smallfireplace.mp3",
+      "descriptionUrl": "https://archive.org/details/aporee_43670_49721",
+      "title": "Nolenai, Lithuania, little bonfire",
+      "author": "alas23/sala",
+      "credit": "aporee_43670_49721",
+      "license": "http://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseUrl": "http://creativecommons.org/publicdomain/mark/1.0/",
+      "usageTerms": "",
+      "attributionRequired": false,
+      "sourceDuration": 0,
+      "sha1": "7cc7e8d56d049bcba29bf68203832c93bf6fdc39",
+      "bytes": 4229551
     }
   ]
 }

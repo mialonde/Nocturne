@@ -223,6 +223,8 @@ export const ar: Messages = {
   // Soundscape labels
   'ambience.toast.soundscape': 'البيئة الصوتية: {name}',
   'ambience.presetMix': 'مزيج جاهز',
+  'ambience.recording': 'تسجيل',
+  'ambience.recordingHint': 'يشغّل تسجيلاً ميدانياً برخصة مفتوحة.',
 
   // Settings panel
   'settings.title': 'الإعدادات',

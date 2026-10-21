@@ -223,6 +223,8 @@ export const zh: Messages = {
   // Soundscape labels
   'ambience.toast.soundscape': '环境声场: {name}',
   'ambience.presetMix': '预设混音',
+  'ambience.recording': '录音',
+  'ambience.recordingHint': '播放采用开放许可的现场录音。',
 
   // Settings panel
   'settings.title': '设置',

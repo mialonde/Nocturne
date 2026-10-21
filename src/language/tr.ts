@@ -223,6 +223,8 @@ export const tr: Messages = {
   // Soundscape labels
   'ambience.toast.soundscape': 'Ses Alanı: {name}',
   'ambience.presetMix': 'Hazır miks',
+  'ambience.recording': 'Kayıt',
+  'ambience.recordingHint': 'Açık lisanslı bir saha kaydını çalar.',
 
   // Settings panel
   'settings.title': 'Ayarlar',
