@@ -2,150 +2,140 @@
    NOCTURNE AMBIENCE LIBRARY & SOUNDSCAPE PROFILE SELECTOR STYLES
    ========================================================================== */
 
-/* Embedded Soundscape Profile Selector inside SoundPanel */
+/* Embedded Soundscape Profile Selector inside SoundPanel.
+   The selector already lives inside a panel section, so it stays flat:
+   no second frame, no nested card. */
 .soundscape-selector {
-  margin: 14px 0 16px;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius-sm);
-  background:
-    linear-gradient(160deg, rgba(16, 24, 36, 0.65), rgba(8, 13, 20, 0.75)),
-    rgba(12, 18, 28, 0.5);
-  backdrop-filter: blur(14px);
-  padding: 14px 14px 12px;
-  transition: all 200ms var(--ease);
-}
-
-.soundscape-selector:hover {
-  border-color: var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
 }
 
 .soundscape-selector__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .soundscape-selector__title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  min-width: 0;
 }
 
+/* Mirrors the panel section eyebrow. */
 .soundscape-selector__label {
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  color: var(--faint);
+  font-size: 7px;
+  font-weight: 580;
+  letter-spacing: 0.2em;
+  line-height: 1.4;
   text-transform: uppercase;
-  color: var(--muted);
 }
 
 .soundscape-selector__active-chip {
   display: flex;
-  align-items: center;
-  gap: 7px;
+  align-items: baseline;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .soundscape-selector__cat-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(196, 219, 226, 0.12);
-  color: var(--cyan);
+  color: var(--accent-dim);
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
+/* Mirrors the panel section title. */
 .soundscape-selector__active-name {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 400;
-  color: var(--text);
+  color: var(--text-soft);
   letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .soundscape-selector__active-en {
-  font-size: 11px;
   color: var(--muted);
+  font-size: 9.5px;
   font-style: italic;
 }
 
 .soundscape-selector__header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  flex: none;
+  padding-top: 2px;
 }
 
-.soundscape-selector__clear-btn {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 9px;
-  border: 1px solid rgba(220, 120, 120, 0.25);
-  border-radius: var(--radius-pill);
-  background: rgba(220, 100, 100, 0.08);
-  color: #e09999;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 160ms var(--ease);
-}
-
-.soundscape-selector__clear-btn:hover {
-  background: rgba(220, 100, 100, 0.16);
-  border-color: rgba(220, 120, 120, 0.45);
-  color: #ffb5b5;
-}
-
+/* Same shape as the theme buttons, only one step smaller. */
+.soundscape-selector__clear-btn,
 .soundscape-selector__toggle-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 28px;
+  height: 26px;
   padding: 0 10px;
-  border: 1px solid var(--line-soft);
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 600;
+  background: transparent;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 520;
+  letter-spacing: 0.09em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
-  transition: all 160ms var(--ease);
+  transition:
+    color 180ms var(--ease),
+    background 180ms var(--ease),
+    border-color 180ms var(--ease);
 }
 
+.soundscape-selector__toggle-btn {
+  border-color: var(--line-soft);
+  background: rgba(8, 13, 19, 0.25);
+  color: var(--text-soft);
+}
+
+.soundscape-selector__clear-btn:hover,
 .soundscape-selector__toggle-btn:hover {
-  background: rgba(196, 219, 226, 0.14);
-  border-color: var(--accent);
-  color: var(--accent-bright);
+  background: var(--surface-hover);
+  color: var(--text);
 }
 
 .soundscape-selector__body {
-  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--line-soft);
   animation: panel-in 240ms var(--ease-out) both;
 }
 
-/* Category Pills in Soundscape Profile */
+/* Search field, same shape as the theme inputs. */
 .soundscape-search {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 34px;
-  margin-bottom: 10px;
-  padding: 0 10px;
+  height: 32px;
+  padding: 0 9px;
   border: 1px solid var(--line-soft);
-  border-radius: var(--radius-pill);
-  background: rgba(4, 8, 13, 0.26);
+  border-radius: var(--radius-xs);
+  background: rgba(4, 8, 13, 0.3);
   color: var(--faint);
-  transition: border-color 160ms var(--ease), background 160ms var(--ease);
+  transition: border-color 180ms var(--ease), background 180ms var(--ease);
 }
 
 .soundscape-search:focus-within {
-  border-color: rgba(160, 205, 218, 0.38);
+  border-color: var(--line-strong);
   background: rgba(8, 14, 22, 0.5);
 }
 
@@ -157,8 +147,9 @@
   outline: 0;
   background: transparent;
   color: var(--text-soft);
-  font-size: 11px;
-  letter-spacing: 0.015em;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 .soundscape-search input::placeholder {
@@ -173,61 +164,62 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(196, 219, 226, 0.08);
+  background: var(--surface-soft);
   color: var(--muted);
+  cursor: pointer;
+  transition: background 160ms var(--ease), color 160ms var(--ease);
 }
 
 .soundscape-search__clear:hover {
-  background: rgba(196, 219, 226, 0.16);
+  background: var(--surface-hover);
   color: var(--text);
 }
 
+/* Category tabs, same shape as the theme segmented control. The row wraps
+   instead of scrolling, so every category stays reachable. */
 .soundscape-tabs {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 12px;
-  scrollbar-width: none;
-}
-
-.soundscape-tabs::-webkit-scrollbar {
-  display: none;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: rgba(3, 7, 11, 0.24);
 }
 
 .soundscape-tab {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 550;
-  letter-spacing: 0.02em;
+  flex: 0 1 auto;
+  min-width: max-content;
+  max-width: 100%;
+  height: 25px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 8.5px;
+  font-weight: 470;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 160ms var(--ease);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
 }
 
 .soundscape-tab:hover {
-  background: var(--surface-hover);
-  border-color: var(--line-strong);
-  color: var(--text);
+  color: var(--text-soft);
+  background: var(--surface-soft);
 }
 
 .soundscape-tab.is-active {
-  background: rgba(196, 219, 226, 0.15);
-  border-color: var(--accent);
-  color: var(--accent-bright);
-  box-shadow: 0 0 12px rgba(196, 219, 226, 0.15);
+  background: rgba(190, 218, 228, 0.09);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(191, 220, 228, 0.06);
 }
 
 /* Sound Items Grid */
@@ -246,19 +238,21 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
+  gap: 5px;
+  padding: 9px 11px;
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-xs);
-  background: rgba(14, 21, 31, 0.55);
+  background: rgba(9, 14, 22, 0.5);
   cursor: pointer;
-  transition: all 160ms var(--ease);
+  transition:
+    background 160ms var(--ease),
+    border-color 160ms var(--ease),
+    transform 160ms var(--ease);
 }
 
 .soundscape-card:hover {
-  background: rgba(20, 31, 46, 0.75);
-  border-color: var(--line-strong);
-  transform: translateX(1px);
+  background: var(--surface-hover);
+  border-color: var(--line);
 }
 
 .soundscape-card:focus-visible {
@@ -267,11 +261,8 @@
 }
 
 .soundscape-card.is-selected {
-  border-color: rgba(196, 219, 226, 0.4);
-  background:
-    linear-gradient(145deg, rgba(24, 38, 54, 0.75), rgba(12, 19, 30, 0.85)),
-    rgba(16, 25, 38, 0.7);
-  box-shadow: 0 0 16px rgba(196, 219, 226, 0.1);
+  border-color: var(--line-strong);
+  background: rgba(190, 218, 228, 0.07);
 }
 
 .soundscape-card.is-playing {
@@ -314,17 +305,17 @@
 }
 
 .soundscape-card__title {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: 0.01em;
 }
 
 .soundscape-card__subtitle {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .soundscape-check {
@@ -337,27 +328,28 @@
   align-items: center;
   gap: 3px;
   padding: 1px 5px;
-  border: 1px solid var(--faint);
-  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  background: var(--surface-soft);
   color: var(--accent-dim);
-  font-size: 7.5px;
-  letter-spacing: 0.09em;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .soundscape-card__desc {
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 10px;
+  line-height: 1.45;
   color: var(--text-soft);
-  margin: 2px 0 0;
+  margin: 1px 0 0;
 }
 
 .soundscape-card__character {
   display: block;
-  font-size: 9.5px;
+  font-size: 9px;
   color: var(--muted);
-  font-style: italic;
   margin-top: 1px;
 }
 
@@ -447,7 +439,7 @@
 }
 
 .soundscape-vol-val {
-  font-size: 10px;
+  font-size: 9.5px;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--accent);
@@ -465,29 +457,40 @@
 .soundscape-mixes__subtabs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: rgba(3, 7, 11, 0.24);
 }
 
 .soundscape-subtab {
-  padding: 3px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  flex: 1;
+  min-width: max-content;
+  height: 25px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
   background: transparent;
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 550;
+  font-size: 8.5px;
+  font-weight: 470;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
-  transition: all 160ms var(--ease);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
 }
 
 .soundscape-subtab:hover {
-  color: var(--text);
+  color: var(--text-soft);
+  background: var(--surface-soft);
 }
 
 .soundscape-subtab.is-active {
-  background: rgba(196, 219, 226, 0.1);
-  border-color: var(--line-strong);
-  color: var(--accent-bright);
+  background: rgba(190, 218, 228, 0.09);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(191, 220, 228, 0.06);
 }
 
 .soundscape-card__pills {
@@ -498,19 +501,19 @@
 }
 
 .soundscape-pill {
-  font-size: 9.5px;
+  font-size: 9px;
   padding: 2px 6px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  background: var(--surface-soft);
   color: var(--text-soft);
   border: 1px solid var(--line-soft);
 }
 
 .soundscape-empty {
-  padding: 20px 10px;
+  padding: 18px 10px;
   text-align: center;
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: 10px;
 }
 
 .soundscape-delete-btn {
@@ -538,23 +541,29 @@
 .soundscape-save-trigger {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   width: 100%;
-  justify-content: center;
-  padding: 7px 12px;
-  border: 1px dashed var(--line-strong);
+  padding: 8px 12px;
+  border: 1px dashed var(--line);
   border-radius: var(--radius-xs);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--accent-dim);
-  font-size: 11px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 8.5px;
+  font-weight: 520;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 160ms var(--ease);
+  transition:
+    color 180ms var(--ease),
+    background 180ms var(--ease),
+    border-color 180ms var(--ease);
 }
 
 .soundscape-save-trigger:hover {
-  background: rgba(196, 219, 226, 0.08);
-  border-color: var(--accent);
-  color: var(--accent-bright);
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+  color: var(--text-soft);
 }
 
 .soundscape-inline-form {
@@ -565,43 +574,52 @@
 
 .soundscape-inline-input {
   flex: 1;
-  height: 30px;
-  padding: 0 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-xs);
-  background: rgba(10, 15, 24, 0.8);
-  color: var(--text);
-  font-size: 11.5px;
-}
-
-.soundscape-inline-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.soundscape-btn-sm {
+  min-width: 0;
   height: 30px;
   padding: 0 10px;
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-xs);
+  background: rgba(4, 8, 13, 0.3);
+  color: var(--text-soft);
+  font-size: 10.5px;
+}
+
+.soundscape-inline-input:focus {
+  outline: none;
+  border-color: var(--line-strong);
+}
+
+.soundscape-btn-sm {
+  height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 8.5px;
+  font-weight: 520;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   cursor: pointer;
+  transition:
+    color 180ms var(--ease),
+    background 180ms var(--ease),
+    border-color 180ms var(--ease);
 }
 
 .soundscape-btn-sm:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-hover);
+  border-color: var(--line);
 }
 
 .soundscape-btn-sm--primary {
-  background: rgba(196, 219, 226, 0.18);
-  border-color: var(--accent);
-  color: var(--accent-bright);
+  background: rgba(190, 218, 228, 0.14);
+  border-color: var(--line-strong);
+  color: var(--text);
 }
 
 .soundscape-btn-sm--primary:hover {
-  background: var(--accent);
-  color: #06090e;
+  background: rgba(190, 218, 228, 0.2);
+  color: var(--text);
 }
