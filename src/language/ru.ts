@@ -4,6 +4,7 @@ import type { Messages } from './en'
  * Русский каталог переводов (Russian translation).
  */
 export const ru: Messages = {
+  'panel.loadError': 'Не удалось загрузить панель. Проверьте подключение и перезагрузите приложение.',
   // Shared
   'common.cancel': 'Отмена',
   'common.close': 'Закрыть',

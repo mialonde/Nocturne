@@ -4,6 +4,7 @@ import type { Messages } from './en'
  * 日本語翻訳カタログ (Japanese translation).
  */
 export const ja: Messages = {
+  'panel.loadError': 'パネルを読み込めませんでした。接続を確認してアプリを再読み込みしてください。',
   // Shared
   'common.cancel': 'キャンセル',
   'common.close': '閉じる',

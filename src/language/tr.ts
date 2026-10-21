@@ -4,6 +4,7 @@ import type { Messages } from './en'
  * Türkçe dil kataloğu (Turkish translation).
  */
 export const tr: Messages = {
+  'panel.loadError': 'Panel yüklenemedi. Bağlantını kontrol edip uygulamayı yeniden yükle.',
   // Shared
   'common.cancel': 'İptal',
   'common.close': 'Kapat',

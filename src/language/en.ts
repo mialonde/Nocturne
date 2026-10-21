@@ -5,6 +5,7 @@
  * Use {placeholders} for runtime values.
  */
 export const en = {
+  'panel.loadError': 'This panel could not load. Check your connection and reload the app.',
   // Shared
   'common.cancel': 'Cancel',
   'common.close': 'Close',

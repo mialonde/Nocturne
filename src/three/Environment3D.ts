@@ -29,7 +29,7 @@ import {
   waveFragmentShader,
   waveVertexShader,
 } from './shaders'
-import { ConsciousnessLayer } from './ConsciousnessLayer'
+import type { ConsciousnessLayer } from './ConsciousnessLayer'
 
 interface ThemeRuntime {
   backgroundTop: THREE.Color
@@ -282,6 +282,7 @@ export class Environment3D {
   private clickFlash = 0
   private lastBeat = 10
   private consciousnessLayer: ConsciousnessLayer | null = null
+  private consciousnessLoading = false
   private currentThemeId: ThemeId = 'dusk'
 
   private readonly backgroundMaterial: THREE.ShaderMaterial
@@ -901,23 +902,29 @@ export class Environment3D {
     }
   }
 
-  private activateConsciousnessLayer(): void {
-    if (this.consciousnessLayer) return
+  private async activateConsciousnessLayer(): Promise<void> {
+    if (this.consciousnessLayer || this.consciousnessLoading || this.disposed) return
+    this.consciousnessLoading = true
     try {
+      const { ConsciousnessLayer } = await import('./ConsciousnessLayer')
+      // A user may leave Cosmos or dispose the room while the module loads.
+      if (this.disposed || this.currentThemeId !== 'cosmos') return
       this.consciousnessLayer = new ConsciousnessLayer(this.scene, this.visuals.reducedMotion)
       this.consciousnessLayer.setPixelRatio(this.currentDpr)
       const theme = this.currentTheme
       this.consciousnessLayer.setColors(theme.orbEdge, theme.ring, theme.particle, theme.halo)
     } catch (error) {
       console.warn('Nocturne: ConsciousnessLayer could not be created.', error)
+      this.consciousnessLayer?.dispose()
       this.consciousnessLayer = null
+    } finally {
+      this.consciousnessLoading = false
     }
   }
 
   setTheme(theme: ThemeId): void {
     const config = THEMES[theme]
     const next = themeRuntime(config)
-    const wasNotCosmos = this.currentThemeId !== 'cosmos'
     const isNowCosmos  = theme === 'cosmos'
     this.currentThemeId = theme
 
@@ -928,7 +935,6 @@ export class Environment3D {
       this.consciousnessLayer.dispose()
       this.consciousnessLayer = null
     }
-    void wasNotCosmos
 
     this.targetTheme.backgroundTop.copy(next.backgroundTop)
     this.targetTheme.backgroundBottom.copy(next.backgroundBottom)

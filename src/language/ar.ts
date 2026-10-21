@@ -4,6 +4,7 @@ import type { Messages } from './en'
  * دليل الترجمة العربية (Arabic translation).
  */
 export const ar: Messages = {
+  'panel.loadError': 'تعذر تحميل اللوحة. تحقق من الاتصال وأعد تحميل التطبيق.',
   // Shared
   'common.cancel': 'إلغاء',
   'common.close': 'إغلاق',

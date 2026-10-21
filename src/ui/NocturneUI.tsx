@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, useEffect } from 'react'
 import { Eye } from 'lucide-react'
 import { useTranslation } from '../language/useTranslation'
 import { useNocturneRuntime } from '../runtime/NocturneRuntime'
@@ -15,13 +15,14 @@ import { SleepTimerHud } from './SleepTimerHud'
 import { ToastViewport } from './ToastViewport'
 import { SimulatorOverlay } from './SimulatorOverlay'
 import { TopBar } from './TopBar'
-import { SessionDesigner } from './designer/SessionDesigner'
+import { DeferredPanel } from './panels/DeferredPanel'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useRecordingNotifications } from './hooks/useRecordingNotifications'
 import { BreathPanel } from './panels/BreathPanel'
 import { SettingsPanel } from './panels/SettingsPanel'
 import { SoundPanel } from './panels/SoundPanel'
-import { StudioPanel } from './panels/StudioPanel'
+const StudioPanel = lazy(() => import('./panels/StudioPanel').then((module) => ({ default: module.StudioPanel })))
+const SessionDesigner = lazy(() => import('./designer/SessionDesigner').then((module) => ({ default: module.SessionDesigner })))
 
 function ActivePanel() {
   const activePanel = useNocturneStore((state) => state.activePanel)
@@ -82,7 +83,9 @@ export function NocturneUI() {
         </button>
       ) : null}
 
-      {experienceStarted && !uiHidden && activePanel ? <ActivePanel /> : null}
+      {experienceStarted && !uiHidden && activePanel ? (
+        <DeferredPanel key={activePanel}><ActivePanel /></DeferredPanel>
+      ) : null}
       <ContextLostNotice />
       <ToastViewport />
     </>

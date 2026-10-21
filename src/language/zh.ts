@@ -4,6 +4,7 @@ import type { Messages } from './en'
  * 简体中文翻译目录 (Simplified Chinese translation).
  */
 export const zh: Messages = {
+  'panel.loadError': '面板加载失败。请检查网络连接并重新加载应用。',
   // Shared
   'common.cancel': '取消',
   'common.close': '关闭',
