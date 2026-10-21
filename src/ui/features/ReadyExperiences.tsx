@@ -32,6 +32,7 @@ export function ReadyExperiences() {
         breathRunning: experience.mode === 'breath',
         breathPattern: { inhale: 4, hold: 0, exhale: 6, rest: 0 },
         ambienceTrackVolumes: { ...experience.tracks }, activeMixId: null,
+        features: { ...state.features, voiceProfile: experience.id === 'rain' ? 'sleep' : experience.id === 'focus' ? 'focus' : 'meditation' },
         audio: { ...state.audio, ambientEnabled: true, ambientMuted: false,
           carrier: 200, beat: 10, binauralEnabled: experience.mode === 'binaural' },
       })

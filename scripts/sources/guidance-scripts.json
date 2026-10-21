@@ -1,0 +1,32 @@
+{
+  "sleep": {
+    "name": "Uyku",
+    "nameEn": "Sleep",
+    "direction": "Türkçe. Yumuşak, doğal ve yavaş konuş. Fısıldama, teatral vurgu ve müzik kullanma. Cümleler arasında iki saniye boşluk bırak. Her metni ayrı dosya olarak üret.",
+    "clips": [
+      { "id": "settle", "text": "Rahat bir pozisyon bul. Başının ve omuzlarının ağırlığını bulunduğun yere bırak. Şu an bir şeyi tamamlaman gerekmiyor." },
+      { "id": "release", "text": "Çeneni ve ellerini gevşet. Nefesini değiştirmeye çalışmadan, gelip gitmesini fark et. Bedenindeki ağırlığa biraz daha yer aç." },
+      { "id": "let-go", "text": "Aklına bir düşünce gelirse onunla uğraşman gerekmiyor. Geçip gitmesine izin ver. Dikkatini yeniden bedeninin temas ettiği yüzeye getir." }
+    ]
+  },
+  "focus": {
+    "name": "Odak",
+    "nameEn": "Focus",
+    "direction": "Türkçe. Sakin, açık ve uyanık bir ton kullan. Uyku telkini, fısıltı, coşkulu motivasyon, müzik ve efekt kullanma. Cümleler arasında bir saniye boşluk bırak. Her metni ayrı dosya olarak üret.",
+    "clips": [
+      { "id": "begin", "text": "Önündeki işten küçük ve belirli bir adım seç. Gereksiz pencereleri kapat. Bu süreyi yalnızca seçtiğin adıma ayır." },
+      { "id": "one-task", "text": "Şu anda yaptığın tek işe dön. Başka bir şey aklına geldiyse kısaca not alıp bırak. Önündeki adımı sürdür." },
+      { "id": "return", "text": "Dikkatinin dağıldığını fark etmen yeterli. Nerede kaldığına bak. Bir sonraki küçük adımla devam et." }
+    ]
+  },
+  "meditation": {
+    "name": "Meditasyon",
+    "nameEn": "Meditation",
+    "direction": "Türkçe. Sakin, sıcak ve doğal bir ses kullan. Emir veren, mistik veya dramatik bir ton kullanma. Nefesleri bilerek uzatma; cümleler arasında iki saniye boşluk bırak. Müzik ekleme. Her metni ayrı dosya olarak üret.",
+    "clips": [
+      { "id": "arrive", "text": "Rahatça otur veya uzan. Bedeninin bulunduğun yerle temasını fark et. İstersen gözlerini kapatabilir ya da bakışını tek bir noktada dinlendirebilirsin." },
+      { "id": "observe", "text": "Nefesinin bedeninde en belirgin olduğu yeri fark et. Göğsünde, karnında ya da burnunun çevresinde olabilir. Nefesini zorlamadan izlemeyi dene." },
+      { "id": "return", "text": "Bir düşünceye veya sese yöneldiğinde bunu fark et. Kendini eleştirmeden, dikkatini yeniden nefesine getir. Her dönüş, bu çalışmanın bir parçası." }
+    ]
+  }
+}

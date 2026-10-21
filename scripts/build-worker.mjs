@@ -25,7 +25,7 @@ for (const file of files) {
 }
 const version = `nocturne-${hash.digest('hex').slice(0, 16)}`
 const assets = files.map((file) => '/' + relative(dist, file).split('\\').join('/'))
-  .filter((file) => !file.startsWith('/audio/') && !file.startsWith('/licenses/'))
+  .filter((file) => (!file.startsWith('/audio/') || file.startsWith('/audio/guidance/')) && !file.startsWith('/licenses/'))
 const worker = template
   .replace("const VERSION = 'nocturne-dev'", `const VERSION = ${JSON.stringify(version)}`)
   .replace(/^const PRECACHE_ASSETS = .*$/m, `const PRECACHE_ASSETS = ${JSON.stringify(assets)}`)

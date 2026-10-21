@@ -1,7 +1,9 @@
+import { isGuidanceProfile, type GuidanceProfileId } from './guidance'
 export interface FeatureSettings {
   audioOnly: boolean
   keepAwake: boolean
   voiceEnabled: boolean
+  voiceProfile: GuidanceProfileId
   voiceVolume: number
   voiceEverySec: number
   personalEnabled: boolean
@@ -15,7 +17,7 @@ export interface FeatureSettings {
 
 export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
   audioOnly: false, keepAwake: true,
-  voiceEnabled: false, voiceVolume: 0.5, voiceEverySec: 90,
+  voiceEnabled: false, voiceProfile: 'meditation', voiceVolume: 0.5, voiceEverySec: 90,
   personalEnabled: false, personalVolume: 0.5, personalPan: 0,
   livingEnabled: false, livingSeed: 42, livingVariation: 0.3, livingEverySec: 45,
 }
@@ -24,6 +26,7 @@ export function sanitizeFeatures(value: unknown): FeatureSettings {
   const result = { ...DEFAULT_FEATURE_SETTINGS }
   if (!value || typeof value !== 'object') return result
   const source = value as Record<string, unknown>
+  if (isGuidanceProfile(source.voiceProfile)) result.voiceProfile = source.voiceProfile
   for (const key of ['audioOnly', 'keepAwake', 'voiceEnabled', 'personalEnabled', 'livingEnabled'] as const) {
     if (typeof source[key] === 'boolean') result[key] = source[key]
   }

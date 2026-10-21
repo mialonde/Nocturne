@@ -9,20 +9,21 @@ export function FeatureController() {
   const { audio } = useNocturneRuntime()
   const features = useNocturneStore((state) => state.features)
   const playing = useNocturneStore((state) => state.audioStatus === 'playing')
-  const master = useNocturneStore((state) => state.audio.masterVolume)
-  const [guide] = useState(() => new VoiceGuide())
+  const [guide] = useState(() => new VoiceGuide(audio))
   useEffect(() => {
-    const start = () => {
-      if (playing && features.voiceEnabled) guide.start(features.voiceVolume * master, features.voiceEverySec)
-      else guide.stop()
-    }
-    start()
-    if (typeof speechSynthesis !== 'undefined') speechSynthesis.addEventListener('voiceschanged', start)
-    return () => {
+    if (playing && features.voiceEnabled) {
+      guide.start(features.voiceProfile, features.voiceVolume, features.voiceEverySec, () => {
+        const state = useNocturneStore.getState()
+        state.updateFeatures({ voiceEnabled: false })
+        state.showToast(state.language === 'tr'
+          ? 'Bu rehberin ses kaydı henüz eklenmedi veya okunamadı.'
+          : 'This guidance recording is missing or could not be read.', 'warning')
+      })
+    } else {
       guide.stop()
-      if (typeof speechSynthesis !== 'undefined') speechSynthesis.removeEventListener('voiceschanged', start)
     }
-  }, [guide, playing, features.voiceEnabled, features.voiceVolume, features.voiceEverySec, master])
+    return () => guide.stop()
+  }, [guide, playing, features.voiceEnabled, features.voiceProfile, features.voiceVolume, features.voiceEverySec])
   useEffect(() => {
     if (!features.livingEnabled || !playing) { audio.setLivingFactors({}); return }
     let event = 0

@@ -1,37 +1,68 @@
-const PROMPTS = [
-  'Omuzlarını serbest bırak. Rahat bir pozisyon bul.',
-  'Nefesini zorlamadan, doğal ritmini takip et.',
-  'Çenendeki ve ellerindeki gerginliği bırak.',
-  'Dikkatin dağıldığında, yavaşça nefesine geri dön.',
-  'Bir sonraki nefesi değiştirmeden fark et.',
-]
-export function localTurkishVoice(): SpeechSynthesisVoice | null {
-  if (typeof speechSynthesis === 'undefined') return null
-  return speechSynthesis.getVoices().find((voice) => voice.localService && /^tr(?:-|$)/i.test(voice.lang)) ?? null
-}
+import type { AudioEngine } from './AudioEngine'
+import { GUIDANCE_PROFILES, guidanceAvailability, guidanceClipPath, type GuidanceProfileId } from '../config/guidance'
+
+/** Plays bundled narration through the same master and recording bus as the room. */
 export class VoiceGuide {
   private timer: number | null = null
-  private prompt = 0
-  private speaking = false
-  speak(volume: number): boolean {
-    const voice = localTurkishVoice()
-    if (!voice || this.speaking || volume <= 0) return false
-    const utterance = new SpeechSynthesisUtterance(PROMPTS[this.prompt++ % PROMPTS.length])
-    utterance.voice = voice; utterance.lang = 'tr-TR'; utterance.rate = 0.8
-    utterance.volume = Math.max(0, Math.min(1, volume))
-    this.speaking = true
-    utterance.onend = utterance.onerror = () => { this.speaking = false }
-    speechSynthesis.speak(utterance)
-    return true
+  private generation = 0
+  private request: AbortController | null = null
+  private readonly buffers = new Map<string, AudioBuffer>()
+  constructor(private readonly audio: AudioEngine) {}
+
+  start(profile: GuidanceProfileId, volume: number, everySec: number, onError: (error: unknown) => void): void {
+    this.stop()
+    const generation = this.generation
+    const controller = new AbortController()
+    this.request = controller
+    let index = 0
+    let loading = false
+    const clips = GUIDANCE_PROFILES[profile].clips
+    const play = async () => {
+      if (loading || this.audio.isGuidancePlaying()) return
+      loading = true
+      try {
+        const clip = clips[index]
+        const path = guidanceClipPath(profile, clip.id)
+        let buffer = this.buffers.get(path)
+        if (!buffer) {
+          const response = await fetch(path, { signal: controller.signal })
+          if (!response.ok || response.headers.get('content-type')?.includes('text/html')) {
+            throw new Error('This guidance recording has not been added yet.')
+          }
+          const context = this.audio.getContext()
+          if (!context) throw new Error('Audio is not ready.')
+          buffer = await context.decodeAudioData(await response.arrayBuffer())
+          if (buffer.duration > 120) throw new Error('Guidance clips must be shorter than two minutes.')
+          if (generation !== this.generation) return
+          this.buffers.set(path, buffer)
+        }
+        if (generation !== this.generation || !this.audio.isPlaying()) return
+        this.audio.playGuidance(buffer, volume)
+        // The arrival plays once; subsequent reminders rotate without repeating it.
+        index = index + 1 < clips.length ? index + 1 : 1
+      } catch (error) {
+        if (generation !== this.generation || controller.signal.aborted) return
+        this.stop()
+        onError(error)
+      } finally { loading = false }
+    }
+    void guidanceAvailability(controller.signal).then(async (available) => {
+      if (generation !== this.generation) return
+      if (!available[profile]) throw new Error('This guidance recording has not been added yet.')
+      this.timer = window.setInterval(() => void play(), Math.max(30, everySec) * 1000)
+      await play()
+    }).catch((error) => {
+      if (generation !== this.generation || controller.signal.aborted) return
+      this.stop(); onError(error)
+    })
   }
-  start(volume: number, everySec: number): void {
-    this.stop(); this.speak(volume)
-    this.timer = window.setInterval(() => this.speak(volume), Math.max(30, everySec) * 1000)
-  }
+
   stop(): void {
+    this.generation += 1
+    this.request?.abort()
+    this.request = null
     if (this.timer !== null) window.clearInterval(this.timer)
     this.timer = null
-    if (this.speaking && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel()
-    this.speaking = false
+    this.audio.stopGuidance()
   }
 }

@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "samples:fetch": "node scripts/fetch-commons-samples.mjs",
-    "samples:prepare": "node scripts/prepare-samples.mjs"
+    "samples:prepare": "node scripts/prepare-samples.mjs",
+    "guidance:prepare": "node scripts/prepare-guidance.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",

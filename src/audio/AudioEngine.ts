@@ -68,6 +68,8 @@ export class AudioEngine {
   private personalGeneration = 0
   private personalLevel = 0
   private personalPosition = 0
+  private guidanceSource: AudioBufferSourceNode | null = null
+  private guidanceGain: GainNode | null = null
   private livingFactors: Partial<Record<AmbienceSoundId, number>> = {}
 
   constructor(initialAudio: AudioSettings, theme: ThemeId, ambientProfile: SoundscapeProfileId) {
@@ -173,6 +175,9 @@ export class AudioEngine {
     this.personalPan.pan.value = this.personalPosition
     this.personalGain.connect(this.personalPan)
     this.personalPan.connect(mixBus)
+    this.guidanceGain = context.createGain()
+    this.guidanceGain.gain.value = 0
+    this.guidanceGain.connect(mixBus)
 
     const themeProfile = isThemeId(this.ambientProfile) ? this.ambientProfile : this.themeId
     this.ambient = new AmbientSoundEngine(
@@ -349,6 +354,28 @@ export class AudioEngine {
   setLivingFactors(factors: Partial<Record<AmbienceSoundId, number>>, rampSeconds = 3): void {
     this.livingFactors = { ...factors }
     this.applyLivingVolumes(rampSeconds)
+  }
+
+  playGuidance(buffer: AudioBuffer, volume: number): void {
+    this.stopGuidance()
+    if (!this.context || !this.guidanceGain || !this.playing) return
+    const source = this.context.createBufferSource()
+    source.buffer = buffer
+    this.guidanceGain.gain.setValueAtTime(clamp(volume, 0, 1), this.context.currentTime)
+    source.connect(this.guidanceGain)
+    source.onended = () => {
+      source.disconnect()
+      if (this.guidanceSource === source) this.guidanceSource = null
+    }
+    source.start()
+    this.guidanceSource = source
+  }
+
+  isGuidancePlaying(): boolean { return this.guidanceSource !== null }
+  stopGuidance(): void {
+    this.guidanceSource?.stop()
+    this.guidanceSource?.disconnect()
+    this.guidanceSource = null
   }
 
   configurePersonalAudio(enabled: boolean, volume: number, pan: number): void {
@@ -646,6 +673,9 @@ export class AudioEngine {
   }
 
   dispose(): void {
+    this.stopGuidance()
+    this.guidanceGain?.disconnect()
+    this.guidanceGain = null
     this.clearPersonalAudio()
     this.personalGain?.disconnect()
     this.personalPan?.disconnect()
