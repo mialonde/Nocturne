@@ -116,8 +116,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'Soft, steady rain against a window and leaves.',
     tags: ['yağmur', 'rain', 'nature', 'su', 'water'],
     defaultVolume: 0.65,
-    character: 'Yumuşak filtreli mikro damla vuruşları',
-    characterEn: 'Gently filtered micro-droplets',
+    character: 'Sahada kaydedilmiş yağmur, yumuşak filtreli',
+    characterEn: 'Field recorded rain, gently filtered',
   },
   storm: {
     id: 'storm',
@@ -140,8 +140,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'Rustling trees, a light breeze and distant calm birdsong.',
     tags: ['orman', 'forest', 'nature', 'kuşlar', 'yapraklar'],
     defaultVolume: 0.6,
-    character: 'Organik hışırtı ve aralıklı melodik tınılar',
-    characterEn: 'Organic rustle and occasional melodic tones',
+    character: 'Sahada kaydedilmiş kuş sesleri ve yaprak hışırtısı',
+    characterEn: 'Field recorded birdsong and leaves',
   },
   wind: {
     id: 'wind',
@@ -152,8 +152,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'A wavy, organic airflow moving through pine trees.',
     tags: ['rüzgâr', 'wind', 'nature', 'esinti', 'breeze'],
     defaultVolume: 0.55,
-    character: 'Çift LFO ile rezonans filtreli esintiler',
-    characterEn: 'Dual-LFO resonant filtered gusts',
+    character: 'Sahada kaydedilmiş rüzgâr, rezonans filtreli',
+    characterEn: 'Field recorded wind, resonance filtered',
   },
   ocean: {
     id: 'ocean',
@@ -164,8 +164,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'Rhythmic waves and foam advancing and slowly retreating.',
     tags: ['okyanus', 'ocean', 'nature', 'dalga', 'waves'],
     defaultVolume: 0.65,
-    character: '11 saniyelik döngüsel gel-git dalga simülasyonu',
-    characterEn: '11-second tidal wave cycle',
+    character: 'Sahada kaydedilmiş kıyı dalgaları',
+    characterEn: 'Field recorded shore break',
   },
 
   // --- NOISE ---
@@ -252,8 +252,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'Slow-burning logs, crackling embers and occasional wood pops.',
     tags: ['şömine', 'fireplace', 'sleep', 'ateş', 'fire', 'cozy'],
     defaultVolume: 0.55,
-    character: 'Stokastik Poisson çıtırtı ve akkor uğultusu',
-    characterEn: 'Stochastic Poisson crackle and glowing ember hum',
+    character: 'Sahada kaydedilmiş çıtırdayan ateş',
+    characterEn: 'Field recorded crackling fire',
   },
   distant_thunder: {
     id: 'distant_thunder',
@@ -264,8 +264,8 @@ export const AMBIENCE_SOUNDS: Record<AmbienceSoundId, AmbienceSoundDefinition> =
     descriptionEn: 'Deep, muffled thunder rolling along a distant horizon.',
     tags: ['gök gürültüsü', 'thunder', 'sleep', 'gece'],
     defaultVolume: 0.6,
-    character: '30-80Hz rezonanslı sub-bas dalgaları',
-    characterEn: 'Sub-bass waves resonating between 30–80 Hz',
+    character: 'Sahada kaydedilmiş uzak gök gürültüsü',
+    characterEn: 'Field recorded distant thunder',
   },
 
   // --- COSMIC ---
