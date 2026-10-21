@@ -10,6 +10,8 @@ import type { FullscreenShortcut, QualitySetting } from '../../types'
 import { Segmented, SelectField, Slider, Toggle } from '../components/controls'
 import { PanelNote, PanelSection } from './PanelSection'
 import { PanelShell } from './PanelShell'
+import { BackupControls } from '../features/BackupControls'
+import { useFeatureCopy } from '../features/copy'
 
 const QUALITY_OPTIONS: { value: QualitySetting; label: string; title: string }[] = [
   { value: 'auto', label: 'Auto', title: 'Adapt to measured frame rate' },
@@ -26,6 +28,9 @@ const SHORTCUT_OPTIONS: { value: FullscreenShortcut; label: string }[] = [
 ]
 
 export function SettingsPanel() {
+  const copy = useFeatureCopy()
+  const features = useNocturneStore((state) => state.features)
+  const updateFeatures = useNocturneStore((state) => state.updateFeatures)
   const { t } = useTranslation()
   const runtime = useNocturneRuntime()
   const language = useNocturneStore((state) => state.language)
@@ -55,6 +60,13 @@ export function SettingsPanel() {
 
   return (
     <PanelShell id="settings" title="Settings" eyebrow="Room / interface / access">
+      <PanelSection title={copy.power}>
+        <Toggle label={copy.audioOnly} description={copy.audioOnlyHint} checked={features.audioOnly}
+          onChange={(audioOnly) => updateFeatures({ audioOnly })} />
+        <Toggle label={copy.awake} description={copy.awakeHint} checked={features.keepAwake}
+          onChange={(keepAwake) => updateFeatures({ keepAwake })} />
+      </PanelSection>
+      <BackupControls />
       <PanelSection
         title="Visual field"
         eyebrow="Restrained by design"

@@ -62,6 +62,12 @@ export class AudioEngine {
   private suspendTimer: number | null = null
   private timeDomainData: Uint8Array<ArrayBuffer> | null = null
   private frequencyData: Uint8Array<ArrayBuffer> | null = null
+  private personalSource: AudioBufferSourceNode | null = null
+  private personalGain: GainNode | null = null
+  private personalPan: StereoPannerNode | null = null
+  private personalGeneration = 0
+  private personalLevel = 0
+  private personalPosition = 0
 
   constructor(initialAudio: AudioSettings, theme: ThemeId, ambientProfile: SoundscapeProfileId) {
     this.audioConfig = {
@@ -160,6 +166,12 @@ export class AudioEngine {
     this.sleepFadeGain = sleepFadeGain
     this.analyser = analyser
     this.mediaDestination = mediaDestination
+    this.personalGain = context.createGain()
+    this.personalPan = context.createStereoPanner()
+    this.personalGain.gain.value = this.personalLevel
+    this.personalPan.pan.value = this.personalPosition
+    this.personalGain.connect(this.personalPan)
+    this.personalPan.connect(mixBus)
 
     const themeProfile = isThemeId(this.ambientProfile) ? this.ambientProfile : this.themeId
     this.ambient = new AmbientSoundEngine(
@@ -324,6 +336,40 @@ export class AudioEngine {
   ): void {
     this.ambienceTrackVolumes = { ...volumes }
     this.ambienceLibrary?.setTrackVolumes(volumes, rampSeconds)
+  }
+
+  configurePersonalAudio(enabled: boolean, volume: number, pan: number): void {
+    this.personalLevel = enabled ? clamp(volume, 0, 1) : 0
+    this.personalPosition = clamp(pan, -1, 1)
+    if (this.context && this.personalGain && this.personalPan) {
+      safeRamp(this.personalGain.gain, this.personalLevel, this.context.currentTime, 0.2)
+      safeRamp(this.personalPan.pan, this.personalPosition, this.context.currentTime, 0.2)
+    }
+  }
+
+  hasPersonalAudio(): boolean { return this.personalSource !== null }
+
+  async loadPersonalAudio(file: Blob): Promise<void> {
+    const generation = ++this.personalGeneration
+    const context = await this.ensureGraph()
+    const buffer = await context.decodeAudioData(await file.arrayBuffer())
+    if (generation !== this.personalGeneration || context.state === 'closed') return
+    if (buffer.duration > 600) throw new Error('Personal audio is limited to 10 minutes per loop.')
+    this.personalSource?.stop()
+    this.personalSource?.disconnect()
+    const source = context.createBufferSource()
+    source.buffer = buffer
+    source.loop = true
+    source.connect(this.personalGain!)
+    source.start()
+    this.personalSource = source
+  }
+
+  clearPersonalAudio(): void {
+    this.personalGeneration += 1
+    this.personalSource?.stop()
+    this.personalSource?.disconnect()
+    this.personalSource = null
   }
 
   getAmbienceLibrary(): AmbienceLibraryEngine | null {
@@ -587,6 +633,11 @@ export class AudioEngine {
   }
 
   dispose(): void {
+    this.clearPersonalAudio()
+    this.personalGain?.disconnect()
+    this.personalPan?.disconnect()
+    this.personalGain = null
+    this.personalPan = null
     if (this.suspendTimer !== null) {
       window.clearTimeout(this.suspendTimer)
       this.suspendTimer = null

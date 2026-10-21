@@ -18,6 +18,7 @@ import { RecordingEngine } from '../recording/RecordingEngine'
 import { SessionPlayer } from '../session/SessionPlayer'
 import { useNocturneStore } from '../store/useNocturneStore'
 import { Environment3D } from '../three/Environment3D'
+import { readPersonalAudio } from '../storage/personalAudio'
 import type {
   BreathState,
   SavedSession,
@@ -363,10 +364,12 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     const store = useNocturneStore
     const current = store.getState()
     audio.setAudioConfig(current.audio, 0.12)
+    audio.configurePersonalAudio(current.features.personalEnabled, current.features.personalVolume, current.features.personalPan)
     audio.setTheme(current.theme, 0.2)
     audio.setAmbientProfile(current.ambientProfile, 0.2)
     audio.setAmbienceTrackVolumes(current.ambienceTrackVolumes, 0.12)
     environment?.setVisualSettings(current.visuals)
+    environment?.setAudioOnly(current.features.audioOnly)
     environment?.setPracticeState(current.mode, current.breathRunning, current.breathPattern)
     environment?.setBinauralReadout(current.audio.carrier, current.audio.beat)
 
@@ -374,6 +377,12 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     const unsubscribe = store.subscribe((state) => {
       const prior = previous
       previous = state
+      if (state.features !== prior.features) {
+        audio.configurePersonalAudio(state.features.personalEnabled, state.features.personalVolume, state.features.personalPan)
+      }
+      if (state.features.audioOnly !== prior.features.audioOnly) {
+        environment?.setAudioOnly(state.features.audioOnly)
+      }
       const inSession = state.sessionPlayback.status !== 'idle'
       const ramp = inSession
         ? Math.max(0.35, Math.min(30, state.sessionPlayback.transitionSec || 2))
@@ -412,6 +421,28 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
   }, [audio, environment])
 
   useEffect(() => {
+    let active = true
+    let loading = false
+    const restoreAudio = () => {
+      const state = useNocturneStore.getState()
+      if (loading || audio.hasPersonalAudio() || state.audioStatus !== 'playing' || !state.features.personalEnabled) return
+      loading = true
+      void readPersonalAudio().then(async (file) => {
+        if (active && file && !audio.hasPersonalAudio() && useNocturneStore.getState().features.personalEnabled) {
+          await audio.loadPersonalAudio(file.blob)
+        }
+      }).catch((error) => {
+        if (active) useNocturneStore.getState().showToast(describeError(error, 'Personal audio could not load.'), 'warning')
+      }).finally(() => { loading = false })
+    }
+    const unsubscribe = useNocturneStore.subscribe((state, prior) => {
+      if (state.audioStatus !== prior.audioStatus || state.features.personalEnabled !== prior.features.personalEnabled) restoreAudio()
+    })
+    restoreAudio()
+    return () => { active = false; unsubscribe() }
+  }, [audio])
+
+  useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement))
     }
@@ -434,7 +465,7 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     const publish = () => {
       const state = useNocturneStore.getState()
       const playing = state.audioStatus === 'playing'
-      void screenAwake.setEnabled(playing)
+      void screenAwake.setEnabled(playing && state.features.keepAwake && !state.features.audioOnly)
 
       const playback = state.sessionPlayback
       if (playback.status !== 'idle') {
@@ -476,6 +507,7 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     const unsubscribe = useNocturneStore.subscribe((state, previous) => {
       if (
         state.audioStatus !== previous.audioStatus ||
+        state.features !== previous.features ||
         state.sessionPlayback !== previous.sessionPlayback
       ) {
         publish()

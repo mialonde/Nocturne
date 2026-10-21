@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { clampBeat, clampCarrier, DEFAULT_BREATH_PATTERN } from '../config/audio'
 import { createStarterSession } from '../config/sessions'
+import { DEFAULT_FEATURE_SETTINGS, sanitizeFeatures, type FeatureSettings } from '../config/featureSettings'
 import { isThemeId, THEMES } from '../config/themes'
 import { isLanguageCode } from '../language/types'
 import { translate } from '../language'
@@ -61,6 +62,8 @@ function sanitizeTrackVolumes(
 }
 
 export interface NocturneState {
+  features: FeatureSettings
+  updateFeatures: (patch: Partial<FeatureSettings>) => void
   language: LanguageCode
   theme: ThemeId
   ambientProfile: SoundscapeProfileId
@@ -187,6 +190,8 @@ function getInitialSessions(): SavedSession[] {
 export const useNocturneStore = create<NocturneState>()(
   persist(
     (set, get) => ({
+      features: { ...DEFAULT_FEATURE_SETTINGS },
+      updateFeatures: (patch) => set((state) => ({ features: sanitizeFeatures({ ...state.features, ...patch }) })),
       theme: 'dusk',
       ambientProfile: 'dusk',
       experienceStarted: false,
@@ -454,6 +459,7 @@ export const useNocturneStore = create<NocturneState>()(
 
       resetPreferences: () =>
         set({
+          features: { ...DEFAULT_FEATURE_SETTINGS },
           theme: 'dusk',
           ambientProfile: 'dusk',
           audio: { ...defaultAudio, layers: { ...defaultAudio.layers } },
@@ -478,6 +484,7 @@ export const useNocturneStore = create<NocturneState>()(
       storage: createJSONStorage(() => localStorage),
       version: 1,
       partialize: (state) => ({
+        features: state.features,
         language: state.language,
         theme: state.theme,
         ambientProfile: state.ambientProfile,
@@ -520,6 +527,7 @@ export const useNocturneStore = create<NocturneState>()(
         return {
           ...current,
           ...saved,
+          features: sanitizeFeatures(saved.features),
           language,
           theme,
           ambientProfile: saved.ambientProfile ? saved.ambientProfile : theme,

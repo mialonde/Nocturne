@@ -283,6 +283,7 @@ export class Environment3D {
   private lastBeat = 10
   private consciousnessLayer: ConsciousnessLayer | null = null
   private consciousnessLoading = false
+  private audioOnly = false
   private currentThemeId: ThemeId = 'dusk'
 
   private readonly backgroundMaterial: THREE.ShaderMaterial
@@ -1403,6 +1404,11 @@ export class Environment3D {
     }
   }
 
+  setAudioOnly(enabled: boolean): void {
+    this.audioOnly = enabled
+    this.renderer.domElement.style.visibility = enabled ? 'hidden' : ''
+  }
+
   private startLoop(): void {
     if (this.rafId || this.disposed) return
     this.lastFrame = performance.now()
@@ -1412,10 +1418,17 @@ export class Environment3D {
   private animate = (now: number): void => {
     if (this.disposed) return
     this.rafId = requestAnimationFrame(this.animate)
+    // Keep the breath clock alive at 10 Hz without drawing or updating geometry.
+    // Video capture temporarily restores the normal render path.
+    if (this.audioOnly && !this.capture && now - this.lastFrame < 100) return
     const realDelta = (now - this.lastFrame) / 1000
     this.lastFrame = now
-    const dt = clamp(realDelta, 0.0001, 0.05)
+    const dt = clamp(realDelta, 0.0001, this.audioOnly && !this.capture ? 1 : 0.05)
     this.elapsed = (now - this.clockStart) / 1000
+    if (this.audioOnly && !this.capture) {
+      this.updateBreathing(dt, this.elapsed)
+      return
+    }
 
     // Include slow frames instead of silently ignoring them: the previous
     // <120 ms gate made adaptive quality unreachable on genuinely slow GPUs.

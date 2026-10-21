@@ -13,6 +13,8 @@ import { SoundscapeProfileSelector } from '../components/SoundscapeProfileSelect
 import { PanelNote, PanelSection } from './PanelSection'
 import { PanelShell } from './PanelShell'
 import { Slider, Toggle } from '../components/controls'
+import { ReadyExperiences } from '../features/ReadyExperiences'
+import { PersonalAudioControls } from '../features/PersonalAudioControls'
 
 export function SoundPanel() {
   const { t } = useTranslation()
@@ -70,6 +72,7 @@ export function SoundPanel() {
         </button>
       }
     >
+      <ReadyExperiences />
       <PanelSection title={t('sound.output.title')} eyebrow={t('sound.output.eyebrow')}>
         <Slider
           label={t('sound.output.master')}
@@ -231,6 +234,7 @@ export function SoundPanel() {
         <PanelNote tone="warning">{t('sound.binaural.warning')}</PanelNote>
       </PanelSection>
 
+      <PersonalAudioControls />
       <PanelSection title={t('sleep.title')} eyebrow={t('sleep.eyebrow')}>
         <SleepTimerControl />
       </PanelSection>
