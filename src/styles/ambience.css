@@ -332,6 +332,20 @@
   margin-left: auto;
 }
 
+.soundscape-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  border: 1px solid var(--faint);
+  border-radius: 999px;
+  color: var(--accent-dim);
+  font-size: 7.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .soundscape-card__desc {
   font-size: 11px;
   line-height: 1.35;

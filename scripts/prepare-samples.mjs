@@ -33,7 +33,10 @@ const noticesPath = join(root, 'THIRD_PARTY_NOTICES.md')
 const tempDir = join(root, 'assets', 'ambient-work')
 
 const SAMPLE_RATE = 44100
-const PEAK_CEILING = 0.891 // -1 dBFS
+/** Ceiling for the processed recordings, in dB true peak. */
+const PEAK_CEILING_DB = -1.5
+/** Linear counterpart of the ceiling, used by the safety limiter. */
+const PEAK_CEILING = Math.pow(10, PEAK_CEILING_DB / 20)
 
 function resolveFfmpeg() {
   if (process.env.FFMPEG_BIN) return process.env.FFMPEG_BIN
@@ -146,11 +149,22 @@ async function main() {
       workFile,
     ])
 
-    // 2. Measure and normalise with a static gain so the dynamics stay intact.
+    // 2. Normalise to a common level. The gain is the one the loudness target
+    //    asks for, but it never pushes the true peak past the ceiling. A
+    //    sparse recording such as a crackling fire keeps its shape instead of
+    //    being flattened by a limiter.
     const analysis = await measure(workFile)
-    const measured = Number(analysis.input_i)
-    const gain = Number.isFinite(measured) ? source.targetLufs - measured : 0
-    console.log(`  measured ${measured.toFixed(1)} LUFS -> ${source.targetLufs} LUFS (${gain.toFixed(1)} dB)`)
+    const measuredLoudness = Number(analysis.input_i)
+    const measuredPeak = Number(analysis.input_tp)
+    const target = source.targetLufs
+    const loudnessGain = target - measuredLoudness
+    const peakGain = PEAK_CEILING_DB - measuredPeak
+    const gain = Math.min(loudnessGain, peakGain)
+    const limited = gain < loudnessGain
+    console.log(
+      `  measured ${measuredLoudness.toFixed(1)} LUFS / ${measuredPeak.toFixed(1)} dBTP ` +
+        `-> ${target} LUFS (${gain.toFixed(1)} dB${limited ? ', peak limited' : ''})`,
+    )
 
     const loudnessFilter = `volume=${gain.toFixed(2)}dB,alimiter=limit=${PEAK_CEILING}:level=disabled`
 
@@ -162,7 +176,7 @@ async function main() {
       '-i',
       workFile,
       '-af',
-      loudnessFilter,
+      `${loudnessFilter},aresample=${SAMPLE_RATE}`,
       '-c:a',
       'libvorbis',
       '-q:a',
@@ -177,7 +191,7 @@ async function main() {
       '-i',
       workFile,
       '-af',
-      loudnessFilter,
+      `${loudnessFilter},aresample=${SAMPLE_RATE}`,
       '-c:a',
       'libmp3lame',
       '-b:a',
