@@ -1,8 +1,8 @@
 /**
  * Publishes the room to the operating system media session.
  *
- * This gives the lock screen a title, artwork and transport controls, and it
- * is what keeps the audio session alive on mobile once the screen is locked.
+ * This gives the lock screen a title, artwork and transport controls.
+ * Background playback still depends on the browser and operating system.
  */
 
 export interface MediaSessionTransport {
@@ -10,6 +10,33 @@ export interface MediaSessionTransport {
   onPause: () => void
   onStop: () => void
   onSeek?: (positionMs: number) => void
+}
+
+/** Serialize hardware commands so repeated play/pause events cannot toggle playback. */
+export function createMediaTransport(
+  getPlaying: () => boolean,
+  toggle: () => Promise<void>,
+  stop: () => void,
+  onError: (error: unknown) => void,
+): MediaSessionTransport {
+  let pending = Promise.resolve()
+  const request = (playing: boolean | null) => {
+    pending = pending.then(async () => {
+      if (playing === null) stop()
+      else if (getPlaying() !== playing) await toggle()
+    }).catch(onError)
+  }
+  return {
+    onPlay: () => request(true),
+    onPause: () => request(false),
+    onStop: () => request(null),
+  }
+}
+
+function setHandler(session: MediaSession, action: MediaSessionAction, handler: MediaSessionActionHandler | null): void {
+  try { session.setActionHandler(action, handler) } catch {
+    // A browser can expose mediaSession without supporting every action.
+  }
 }
 
 export interface MediaSessionView {
@@ -33,8 +60,7 @@ export function isMediaSessionSupported(): boolean {
 
 /**
  * Writes the current state into the media session and installs the transport
- * handlers. The handlers are only attached once; later calls only refresh the
- * state.
+ * handlers. Unsupported actions are ignored independently.
  */
 export function updateMediaSession(
   view: MediaSessionView,
@@ -59,34 +85,36 @@ export function updateMediaSession(
       session.setPositionState({
         duration: view.durationMs / 1000,
         playbackRate: 1,
-        position: Math.min(view.positionMs / 1000, view.durationMs / 1000),
+        position: Math.max(0, Math.min(view.positionMs / 1000, view.durationMs / 1000)),
       })
     } catch {
       // Some browsers reject a position state that is ahead of the duration.
     }
+  } else {
+    try { session.setPositionState() } catch { /* Optional API. */ }
   }
 
   session.playbackState = view.playing ? 'playing' : 'paused'
 
-  session.setActionHandler('play', () => transport.onPlay())
-  session.setActionHandler('pause', () => transport.onPause())
-  session.setActionHandler('stop', () => transport.onStop())
+  setHandler(session, 'play', () => transport.onPlay())
+  setHandler(session, 'pause', () => transport.onPause())
+  setHandler(session, 'stop', () => transport.onStop())
   if (view.seekable && transport.onSeek) {
-    session.setActionHandler('seekto', (details) => {
+    setHandler(session, 'seekto', (details) => {
       transport.onSeek?.((details.seekTime ?? 0) * 1000)
     })
   } else {
-    try {
-      session.setActionHandler('seekto', null)
-    } catch {
-      // Not every browser knows this action.
-    }
+    setHandler(session, 'seekto', null)
   }
 }
 
 /** Clears the media session, for example when the room is stopped. */
 export function clearMediaSession(): void {
   if (!isMediaSessionSupported()) return
+  for (const action of ['play', 'pause', 'stop', 'seekto'] as const) {
+    setHandler(navigator.mediaSession, action, null)
+  }
+  try { navigator.mediaSession.setPositionState() } catch { /* Optional API. */ }
   try {
     navigator.mediaSession.metadata = null
     navigator.mediaSession.playbackState = 'none'

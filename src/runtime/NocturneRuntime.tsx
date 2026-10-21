@@ -11,7 +11,7 @@ import {
 import { AudioEngine } from '../audio/AudioEngine'
 import { computeBinauralPair } from '../config/audio'
 import { THEMES } from '../config/themes'
-import { clearMediaSession, updateMediaSession } from '../platform/mediaSession'
+import { clearMediaSession, createMediaTransport, updateMediaSession } from '../platform/mediaSession'
 import { ScreenAwake } from '../platform/screenAwake'
 import { AudioExporter } from '../recording/AudioExporter'
 import { RecordingEngine } from '../recording/RecordingEngine'
@@ -152,6 +152,7 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     void audio.stop(0.9)
     useNocturneStore.getState().clearSleepTimer()
     useNocturneStore.getState().setAudioStatus('paused')
+    clearMediaSession()
     window.setTimeout(() => audio.resetSleepFade(0.5), 1100)
   }, [audio, sessionPlayer])
 
@@ -421,11 +422,14 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
   // Keep the display awake while the room plays, and publish the room to the
   // operating system media session so the lock screen can control it.
   useEffect(() => {
-    const transport = {
-      onPlay: () => void togglePlayback(),
-      onPause: () => void togglePlayback(),
-      onStop: () => stopAll(),
-    }
+    const transport = createMediaTransport(
+      () => sessionPlayer.isActive() ? !sessionPlayer.isPaused() : audio.isPlaying(),
+      togglePlayback,
+      stopAll,
+      (error) => useNocturneStore.getState().showToast(
+        describeError(error, 'Playback control failed.'), 'error',
+      ),
+    )
 
     const publish = () => {
       const state = useNocturneStore.getState()
@@ -449,13 +453,13 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      if (playing) {
+      if (playing || state.audioStatus === 'paused') {
         updateMediaSession(
           {
             title: 'NOCTURNE',
             artist: 'Ambient room',
             album: 'A room between states',
-            playing: true,
+            playing,
             positionMs: 0,
             durationMs: 0,
             seekable: false,
@@ -480,8 +484,9 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     return () => {
       unsubscribe()
       void screenAwake.setEnabled(false)
+      clearMediaSession()
     }
-  }, [screenAwake, stopAll, togglePlayback])
+  }, [audio, screenAwake, sessionPlayer, stopAll, togglePlayback])
 
   useEffect(() => {
     const handleVisibility = () => {

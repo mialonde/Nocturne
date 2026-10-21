@@ -1,102 +1,74 @@
 /* eslint-env serviceworker */
-/**
- * NOCTURNE offline worker.
- *
- * The build output has hashed file names, so the worker caches what it sees
- * at runtime instead of a precache list:
- *
- *   - the ambience recordings are cached first, they are the largest and the
- *     most useful offline,
- *   - the app shell and the hashed assets use a stale-while-revalidate
- *     strategy, so a new build is picked up on the next visit,
- *   - navigations fall back to the cached shell when the network is gone.
- */
-const VERSION = 'nocturne-v1'
+// The production build replaces both values with a content version and full asset list.
+const VERSION = 'nocturne-dev'
+const PRECACHE_ASSETS = ['/', '/index.html', '/favicon.svg', '/manifest.webmanifest']
 const SHELL_CACHE = `${VERSION}-shell`
 const AUDIO_CACHE = `${VERSION}-audio`
-
-const AUDIO_PATTERN = /\/audio\/ambient\/.+\.(ogg|mp3)$/
+const AUDIO_PATTERN = /^\/audio\/ambient\/.+\.(ogg|mp3)$/
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches
-      .open(SHELL_CACHE)
-      .then((cache) => cache.addAll(['/', '/index.html', '/favicon.svg', '/manifest.webmanifest']))
-      .catch(() => undefined),
-  )
-  self.skipWaiting()
+  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE_ASSETS)))
+  // Wait for existing tabs to close before changing builds underneath them.
 })
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys.filter((key) => !key.startsWith(VERSION)).map((key) => caches.delete(key)),
-        ),
-      )
-      .then(() => self.clients.claim()),
-  )
+  event.waitUntil(caches.keys().then((keys) => Promise.all(
+    keys.filter((key) => key.startsWith('nocturne-') && key !== SHELL_CACHE && key !== AUDIO_CACHE)
+      .map((key) => caches.delete(key)),
+  )).then(() => self.clients.claim()))
 })
 
-async function cacheFirstAudio(request) {
+async function remember(cache, request, response) {
+  if (!response.ok || response.status === 206) return
+  try { await cache.put(request, response.clone()) } catch {
+    // Quota or storage failures must not interrupt an otherwise usable response.
+  }
+}
+
+async function audioResponse(request, event) {
   const cache = await caches.open(AUDIO_CACHE)
-  const cached = await cache.match(request)
-  if (cached) return cached
-  const response = await fetch(request)
-  if (response.ok) {
-    void cache.put(request, response.clone())
-  }
-  return response
-}
-
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(SHELL_CACHE)
-  const cached = await cache.match(request)
-  const network = fetch(request)
-    .then((response) => {
-      if (response.ok) void cache.put(request, response.clone())
+  try {
+    // Refresh unchanged URLs too: a new recording must not stay stale forever.
+    const response = await fetch(request)
+    if (response.ok) {
+      event.waitUntil(remember(cache, request, response))
       return response
-    })
-    .catch(() => undefined)
-  if (cached) {
-    void network
-    return cached
+    }
+    return (await cache.match(request)) ?? response
+  } catch {
+    return (await cache.match(request)) ?? new Response('', { status: 504, statusText: 'Offline' })
   }
-  const response = await network
-  if (response) return response
-  return new Response('', { status: 504, statusText: 'Offline' })
 }
 
-async function handleNavigation(request) {
+async function shellResponse(request, event) {
+  const cache = await caches.open(SHELL_CACHE)
+  if (request.mode === 'navigate') {
+    // Use the shell belonging to this worker, including while a newer worker waits.
+    const shell = await cache.match('/index.html')
+    if (shell) return shell
+  }
+  const cached = await cache.match(request)
+  if (cached) return cached // Production assets have content-hashed names.
   try {
     const response = await fetch(request)
-    const cache = await caches.open(SHELL_CACHE)
-    if (response.ok) void cache.put('/index.html', response.clone())
+    if (new URL(request.url).pathname.startsWith('/assets/')) {
+      event.waitUntil(remember(cache, request, response))
+    }
     return response
   } catch {
-    const cached = await caches.match('/index.html')
-    return cached ?? new Response('', { status: 504, statusText: 'Offline' })
+    return new Response('', { status: 504, statusText: 'Offline' })
   }
 }
 
 self.addEventListener('fetch', (event) => {
   const request = event.request
-  if (request.method !== 'GET') return
-
+  if (request.method !== 'GET' || request.headers.has('range')) return
   const url = new URL(request.url)
   if (url.origin !== self.location.origin) return
-
   if (AUDIO_PATTERN.test(url.pathname)) {
-    event.respondWith(cacheFirstAudio(request))
-    return
+    event.respondWith(audioResponse(request, event))
+  } else if (request.mode === 'navigate' || url.pathname.startsWith('/assets/') ||
+    PRECACHE_ASSETS.includes(url.pathname)) {
+    event.respondWith(shellResponse(request, event))
   }
-
-  if (request.mode === 'navigate') {
-    event.respondWith(handleNavigation(request))
-    return
-  }
-
-  event.respondWith(staleWhileRevalidate(request))
 })
