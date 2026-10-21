@@ -42,6 +42,7 @@ import {
   type AmbienceSoundDefinition,
   type AmbienceSoundId,
 } from '../../config/ambience'
+import { hasAmbienceSample } from '../../config/ambienceSamples'
 import { isThemeId } from '../../config/themes'
 import { useTranslation } from '../../language/useTranslation'
 import { useNocturneRuntime } from '../../runtime/NocturneRuntime'
