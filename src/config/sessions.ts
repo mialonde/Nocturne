@@ -1,4 +1,5 @@
 import type { SavedSession, SessionSegment } from '../types'
+import { normalizeAutomation } from '../session/automation'
 import { BEAT_MAX, BEAT_MIN, CARRIER_MAX, CARRIER_MIN, DEFAULT_BREATH_PATTERN } from './audio'
 
 let segmentSequence = 0
@@ -142,6 +143,7 @@ export function normalizeSegments(segments: SessionSegment[]): SessionSegment[] 
       : null
     return {
       ...segment,
+      automation: normalizeAutomation(segment.automation),
       durationSec,
       carrier: Math.min(500, Math.max(100, finiteOr(segment.carrier, 200))),
       beat: Math.min(40, Math.max(0.5, finiteOr(segment.beat, 8))),

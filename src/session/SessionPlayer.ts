@@ -12,6 +12,9 @@ import type {
   ThemeId,
 } from '../types'
 import { segmentEnvelope } from './envelope'
+import { automationFrame, type VisualAutomationFrame } from './automation'
+import { AMBIENCE_SOUNDS, PRESET_MIXES, type AmbienceSoundId } from '../config/ambience'
+import { isThemeId, THEMES } from '../config/themes'
 
 interface SessionBaseline {
   theme: ThemeId
@@ -20,6 +23,7 @@ interface SessionBaseline {
   audio: AudioSettings
   breathPattern: BreathPattern
   breathRunning: boolean
+  tracks: Partial<Record<AmbienceSoundId, number>>
 }
 
 function cloneSession(session: SavedSession): SavedSession {
@@ -52,9 +56,13 @@ export class SessionPlayer {
   private segmentIndex = -1
   private lastUiUpdate = 0
   private disposed = false
+  private automationStart: VisualAutomationFrame = { intensity: 0.82, bloom: 0.68, cameraMotion: 1 }
+  private automationCurrent: VisualAutomationFrame | null = null
+  private readonly onAutomation: (frame: VisualAutomationFrame | null) => void
 
-  constructor(audio: AudioEngine) {
+  constructor(audio: AudioEngine, onAutomation: (frame: VisualAutomationFrame | null) => void = () => {}) {
     this.audio = audio
+    this.onAutomation = onAutomation
   }
 
   isActive(): boolean {
@@ -83,6 +91,7 @@ export class SessionPlayer {
       audio: cloneAudio(state.audio),
       breathPattern: { ...state.breathPattern },
       breathRunning: state.breathRunning,
+      tracks: { ...state.ambienceTrackVolumes },
     }
     const copy = cloneSession({ ...session, segments })
     this.session = copy
@@ -136,11 +145,14 @@ export class SessionPlayer {
       return
     }
     if (found.index !== this.segmentIndex) {
+      const previous = this.session.segments[this.segmentIndex]
+      if (previous?.automation) this.applyAutomation(previous, 1)
       this.applySegment(found.index)
     }
     const segment = this.session.segments[found.index]
     if (!segment) return
     const localSeconds = found.segmentElapsedMs / 1000
+    if (segment.automation) this.applyAutomation(segment, localSeconds / segment.durationSec)
     const gain = segmentEnvelope(localSeconds, segment)
     this.audio.setSessionFade(Math.max(0.0001, gain), 0.14)
     const now = performance.now()
@@ -169,9 +181,20 @@ export class SessionPlayer {
         ? 'binaural'
         : 'ambient'
     const state = useNocturneStore.getState()
+    this.automationStart = this.automationCurrent ?? { intensity: state.visuals.intensity, bloom: state.visuals.bloom, cameraMotion: 1 }
+    if (!segment.automation) {
+      this.automationCurrent = null
+      this.onAutomation(null)
+    }
+    const mix = [...PRESET_MIXES, ...state.userMixes].find((item) => item.id === segment.ambientProfile)
+    const tracks = mix?.tracks ?? (Object.hasOwn(AMBIENCE_SOUNDS, segment.ambientProfile)
+      ? { [segment.ambientProfile]: AMBIENCE_SOUNDS[segment.ambientProfile as AmbienceSoundId].defaultVolume }
+      : isThemeId(segment.ambientProfile) ? THEMES[segment.ambientProfile].soundscape.tracks
+      : this.baseline?.tracks ?? state.ambienceTrackVolumes)
     useNocturneStore.setState({
       theme: segment.theme,
       ambientProfile: segment.ambientProfile,
+      ambienceTrackVolumes: { ...tracks },
       mode: nextMode,
       breathRunning: segment.breathing,
       breathPattern: { ...segment.breathPattern },
@@ -203,6 +226,14 @@ export class SessionPlayer {
       )
       this.applyLadder(segment, Math.max(0, segment.durationSec - segmentElapsedSeconds))
     }
+  }
+
+  private applyAutomation(segment: SessionSegment, progress: number): void {
+    if (!segment.automation) return
+    this.automationCurrent = automationFrame(this.automationStart, segment.automation, progress)
+    this.onAutomation(this.automationCurrent)
+    const t = Math.max(0, Math.min(1, progress))
+    this.audio.setSessionAmbientMultiplier(segment.ambientIntensity + (segment.automation.ambientTo - segment.ambientIntensity) * t, 0.12)
   }
 
   /**
@@ -264,6 +295,8 @@ export class SessionPlayer {
 
   private stopSession(restoreAudio: boolean): void {
     if (!this.active && !this.session) return
+    this.automationCurrent = null
+    this.onAutomation(null)
     this.active = false
     this.paused = false
     if (this.timer !== null) {
@@ -288,6 +321,7 @@ export class SessionPlayer {
       useNocturneStore.setState({
         theme: this.baseline.theme,
         ambientProfile: this.baseline.ambientProfile,
+        ambienceTrackVolumes: { ...this.baseline.tracks },
         mode: this.baseline.mode,
         audio: cloneAudio(this.baseline.audio),
         breathPattern: { ...this.baseline.breathPattern },
@@ -305,6 +339,8 @@ export class SessionPlayer {
 
   private finish(natural: boolean): void {
     if (!this.active && !this.session) return
+    this.automationCurrent = null
+    this.onAutomation(null)
     this.active = false
     this.paused = false
     if (this.timer !== null) {
@@ -327,6 +363,7 @@ export class SessionPlayer {
       useNocturneStore.setState({
         theme: natural ? lastTheme : this.baseline.theme,
         ambientProfile: natural ? lastProfile : this.baseline.ambientProfile,
+        ambienceTrackVolumes: { ...(natural ? state.ambienceTrackVolumes : this.baseline.tracks) },
         mode: finalMode,
         audio: cloneAudio(this.baseline.audio),
         breathPattern: { ...this.baseline.breathPattern },
@@ -358,6 +395,7 @@ export class SessionPlayer {
   }
 
   dispose(): void {
+    this.onAutomation(null)
     this.disposed = true
     this.active = false
     this.paused = false

@@ -15,6 +15,7 @@ import { PanelShell } from './PanelShell'
 import { Slider, Toggle } from '../components/controls'
 import { ReadyExperiences } from '../features/ReadyExperiences'
 import { PersonalAudioControls } from '../features/PersonalAudioControls'
+import { LivingControls } from '../features/LivingControls'
 
 export function SoundPanel() {
   const { t } = useTranslation()
@@ -235,6 +236,7 @@ export function SoundPanel() {
       </PanelSection>
 
       <PersonalAudioControls />
+      <LivingControls />
       <PanelSection title={t('sleep.title')} eyebrow={t('sleep.eyebrow')}>
         <SleepTimerControl />
       </PanelSection>

@@ -30,6 +30,7 @@ import {
   waveVertexShader,
 } from './shaders'
 import type { ConsciousnessLayer } from './ConsciousnessLayer'
+import type { VisualAutomationFrame } from '../session/automation'
 
 interface ThemeRuntime {
   backgroundTop: THREE.Color
@@ -284,6 +285,7 @@ export class Environment3D {
   private consciousnessLayer: ConsciousnessLayer | null = null
   private consciousnessLoading = false
   private audioOnly = false
+  private sessionAutomation: VisualAutomationFrame | null = null
   private currentThemeId: ThemeId = 'dusk'
 
   private readonly backgroundMaterial: THREE.ShaderMaterial
@@ -1161,7 +1163,7 @@ export class Environment3D {
 
     // Autonomous slow orbital drift when hands-free
     if (this.autoDrift && !this.isDraggingCamera) {
-      const driftSpeed = reduced ? 0.008 : 0.022
+        const driftSpeed = (reduced ? 0.008 : 0.022) * (this.sessionAutomation?.cameraMotion ?? 1)
       this.targetOrbitTheta += driftSpeed * dt
     }
 
@@ -1217,7 +1219,7 @@ export class Environment3D {
 
   private applyThemeToScene(elapsed: number): void {
     const theme = this.currentTheme
-    const visuals = this.visuals
+    const visuals = { ...this.visuals, ...this.sessionAutomation }
     this.scene.fog = this.fog
     this.fog.color.copy(theme.fog)
     this.fog.density = 0.024 + theme.veil * 0.007
@@ -1404,6 +1406,10 @@ export class Environment3D {
     }
   }
 
+  setSessionAutomation(frame: VisualAutomationFrame | null): void {
+    this.sessionAutomation = frame
+  }
+
   setAudioOnly(enabled: boolean): void {
     this.audioOnly = enabled
     this.renderer.domElement.style.visibility = enabled ? 'hidden' : ''
@@ -1491,7 +1497,7 @@ export class Environment3D {
       capture.camera.updateProjectionMatrix()
 
       if (capture.bloomPass) {
-        capture.bloomPass.strength = this.visuals.bloom * this.currentTheme.bloom * 0.95
+        capture.bloomPass.strength = (this.sessionAutomation?.bloom ?? this.visuals.bloom) * this.currentTheme.bloom * 0.95
       }
       if (capture.gradePass) {
         capture.gradePass.uniforms.uContrast.value = this.visuals.contrast

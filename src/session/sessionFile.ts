@@ -2,6 +2,7 @@ import { isThemeId } from '../config/themes'
 import { DEFAULT_BREATH_PATTERN } from '../config/audio'
 import type { BreathPattern, SavedSession, SessionSegment } from '../types'
 import { createSegmentId, createSessionId, normalizeSegments } from '../config/sessions'
+import { normalizeAutomation } from './automation'
 
 export const SESSION_FILE_FORMAT = 'nocturne-session'
 export const SESSION_FILE_VERSION = 1
@@ -67,6 +68,7 @@ function parseSegment(value: unknown, index: number, usedIds: Set<string>): Sess
       fadeInSec: finiteNumber(record.fadeInSec, 0),
       fadeOutSec: finiteNumber(record.fadeOutSec, 0),
       transitionSec: finiteNumber(record.transitionSec, 6),
+      automation: normalizeAutomation(record.automation),
       ladder: ladder && typeof ladder.to === 'number' && Number.isFinite(ladder.to)
         ? {
             to: ladder.to,

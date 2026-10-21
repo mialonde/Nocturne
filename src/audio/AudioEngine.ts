@@ -68,6 +68,7 @@ export class AudioEngine {
   private personalGeneration = 0
   private personalLevel = 0
   private personalPosition = 0
+  private livingFactors: Partial<Record<AmbienceSoundId, number>> = {}
 
   constructor(initialAudio: AudioSettings, theme: ThemeId, ambientProfile: SoundscapeProfileId) {
     this.audioConfig = {
@@ -187,7 +188,7 @@ export class AudioEngine {
       this.audioConfig.ambientMuted || !this.audioConfig.ambientEnabled,
       0,
     )
-    this.ambienceLibrary.setTrackVolumes(this.ambienceTrackVolumes, 0)
+    this.applyLivingVolumes(0)
     ambientSessionGain.connect(mixBus)
 
     this.binaural = new BinauralAudioEngine(context, mixBus, {
@@ -335,7 +336,19 @@ export class AudioEngine {
     rampSeconds = 0.35,
   ): void {
     this.ambienceTrackVolumes = { ...volumes }
+    this.applyLivingVolumes(rampSeconds)
+  }
+
+  private applyLivingVolumes(rampSeconds: number): void {
+    const volumes = { ...this.ambienceTrackVolumes }
+    for (const id of Object.keys(volumes) as AmbienceSoundId[]) {
+      volumes[id] = clamp((volumes[id] ?? 0) * (this.livingFactors[id] ?? 1), 0, 1)
+    }
     this.ambienceLibrary?.setTrackVolumes(volumes, rampSeconds)
+  }
+  setLivingFactors(factors: Partial<Record<AmbienceSoundId, number>>, rampSeconds = 3): void {
+    this.livingFactors = { ...factors }
+    this.applyLivingVolumes(rampSeconds)
   }
 
   configurePersonalAudio(enabled: boolean, volume: number, pan: number): void {

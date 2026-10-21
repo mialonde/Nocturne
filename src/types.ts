@@ -88,6 +88,14 @@ export interface SessionSegment {
   transitionSec: number
   /** Slides the beat difference across the passage. */
   ladder?: BeatLadder | null
+  automation?: PassageAutomation
+}
+
+export interface PassageAutomation {
+  visualIntensityTo: number
+  bloomTo: number
+  ambientTo: number
+  cameraMotionTo: number
 }
 
 export interface SavedSession {

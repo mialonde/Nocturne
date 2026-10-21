@@ -15,6 +15,7 @@ import { SleepTimerHud } from './SleepTimerHud'
 import { ToastViewport } from './ToastViewport'
 import { SimulatorOverlay } from './SimulatorOverlay'
 import { TopBar } from './TopBar'
+import { FeatureController } from './features/FeatureController'
 import { DeferredPanel } from './panels/DeferredPanel'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useRecordingNotifications } from './hooks/useRecordingNotifications'
@@ -57,6 +58,7 @@ export function NocturneUI() {
   return (
     <>
       <SleepTimerController />
+      <FeatureController />
       {!experienceStarted ? <BeginGate /> : null}
 
       {/* 6D Consciousness Simulator minimal interface */}

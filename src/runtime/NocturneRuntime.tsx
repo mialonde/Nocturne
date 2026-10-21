@@ -68,7 +68,8 @@ export function NocturneRuntimeProvider({ children }: { children: ReactNode }) {
     const state = useNocturneStore.getState()
     return new AudioEngine(state.audio, state.theme, state.ambientProfile)
   })
-  const [sessionPlayer] = useState<SessionPlayer>(() => new SessionPlayer(audio))
+  const [sessionPlayer] = useState<SessionPlayer>(() => new SessionPlayer(audio,
+    (frame) => environmentRef.current?.setSessionAutomation(frame)))
   const [recording] = useState<RecordingEngine>(
     () => new RecordingEngine(audio, () => environmentRef.current),
   )

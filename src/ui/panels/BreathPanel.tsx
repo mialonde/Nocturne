@@ -9,6 +9,7 @@ import { useBreathState } from '../hooks/useBreathState'
 import { NumberField, Toggle } from '../components/controls'
 import { PanelNote, PanelSection } from './PanelSection'
 import { PanelShell } from './PanelShell'
+import { GuideControls } from '../features/GuideControls'
 
 const PATTERN_PRESETS: { label: string; pattern: BreathPattern }[] = [
   { label: 'Unwind · 4 / 2 / 6 / 2', pattern: { inhale: 4, hold: 2, exhale: 6, rest: 2 } },
@@ -65,10 +66,10 @@ export function BreathPanel() {
         </span>
       }
     >
-      <PanelSection title="Guidance" eyebrow="No voice / no pressure">
+      <PanelSection title="Guidance" eyebrow="Optional guidance">
         <p className="panel-copy">
           The environment has its own slow motion. Guided breathing layers a separate, optional
-          rhythm over it. Nothing is spoken, and you can leave at any moment.
+          rhythm over it. Spoken guidance is optional, and you can leave at any moment.
         </p>
 
         {inBreathMode ? (
@@ -148,6 +149,7 @@ export function BreathPanel() {
         />
       </PanelSection>
 
+      <GuideControls />
       <PanelSection title="Pattern" eyebrow="Inhale / hold / exhale / rest">
         <div className="pattern-grid">
           <NumberField

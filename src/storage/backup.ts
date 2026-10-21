@@ -73,7 +73,8 @@ export function parseBackup(raw: string, defaults: BackupPreferences): {
     const id = text(source.id)
     if (!id || sessionIds.has(id)) throw new Error('Invalid or duplicate session ID.')
     sessionIds.add(id)
-    return { ...session, id }
+    return { ...session, id, note: text(source.note, '', 400),
+      updatedAt: number(source.updatedAt, session.updatedAt, 0, 9e15) }
   })
   const mixIds = new Set<string>()
   const userMixes: AmbienceMix[] = saved.userMixes.map((value) => {

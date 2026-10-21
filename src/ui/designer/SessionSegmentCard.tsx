@@ -13,6 +13,7 @@ import { useNocturneStore } from '../../store/useNocturneStore'
 import type { BreathPattern, SessionSegment } from '../../types'
 import { NumberField, SelectField, Slider, TextField, Toggle } from '../components/controls'
 import { formatLongDuration } from '../format'
+import { AutomationControls } from '../features/AutomationControls'
 
 export function SessionSegmentCard({
   segment,
@@ -343,6 +344,7 @@ export function SessionSegmentCard({
               onChange={(transitionSec) => onChange({ transitionSec })}
             />
           </div>
+          <AutomationControls segment={segment} onChange={onChange} />
           <p className="control-hint">
             Fades shape this passage's volume. Transition sets how slowly tone, atmosphere and
             ambience glide into the next passage.
