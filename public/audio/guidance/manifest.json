@@ -1,4 +1,8 @@
 {
   "version": 1,
-  "profiles": { "sleep": false, "focus": false, "meditation": false }
+  "profiles": {
+    "sleep": false,
+    "focus": true,
+    "meditation": false
+  }
 }
