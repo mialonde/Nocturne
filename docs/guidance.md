@@ -1,25 +1,31 @@
 # Recorded Turkish guidance
 
-Future production is tracked in [`../TODO.md`](../TODO.md). The expanded Turkish
-narration script and estimated durations are in
-[`guidance-recording-script-tr.md`](guidance-recording-script-tr.md). That document
-describes a planned one-shot cue schedule; the current player still uses an
-adjustable repeat interval. No speech generation is scheduled automatically.
+Future production is tracked in [`../TODO.md`](../TODO.md). The narration script,
+cue offsets and estimated speech durations are in
+[`guidance-recording-script-tr.md`](guidance-recording-script-tr.md). No speech
+generation is scheduled automatically.
 
 The app uses bundled recordings, not operating-system speech synthesis. There
-are three independent profiles: sleep, focus and meditation. Each has one arrival
-and two subsequent reminders. Reminders repeat at the user's chosen interval;
-the arrival plays only once per start. Pausing playback or disabling the guide
-stops the current clip and pending downloads.
+are three independent profiles: sleep, focus and meditation. Each profile has
+three cues at the one-shot offsets in `scripts/sources/guidance-scripts.json`.
+The clips are spread across the session and never overlap: if a clip runs longer
+than expected, the next due cue waits for it to finish. Pausing playback stops
+the current clip and freezes the cue clock; resuming continues from that point.
+Disabling the guide or changing profile starts a fresh schedule next time. While
+a clip plays, the ambience and binaural bed lower smoothly to keep speech clear,
+then return to their prior level when speech ends.
 
 The narration texts and voice directions are maintained in
-`scripts/sources/guidance-scripts.json`. The nine final speech recordings have
-not been generated yet. Missing profiles are explicitly unavailable in the UI;
-there is no silent system-voice fallback.
+`scripts/sources/guidance-scripts.json`. The chosen narrator is Gönül Filiz
+(`xsGHrtxT5AdDzYXTQT0d`) on ElevenLabs `eleven_v4`. A `sleep/settle` sample is
+available in the ElevenLabs speech view, but generated files have not yet been
+imported. Missing profiles are explicitly unavailable in the UI; there is no
+silent system-voice fallback.
 
-Generate each text as a separate recording using a voice licensed for distribution
-with the application. Do not include music; the app supplies the soundscape.
-Place recordings in a local input directory using the following relative names:
+Generate each text as a separate recording with the selected narrator. Do not
+include music; the app supplies the soundscape. Keep delivery natural and clear,
+without whispers, added breathing or dramatic emphasis. Place recordings in a
+local input directory using the following relative names:
 
 | Profile | Clip names |
 | --- | --- |

@@ -4,9 +4,9 @@
     "nameEn": "Sleep",
     "direction": "Türkçe. Yumuşak, doğal ve yavaş konuş. Fısıldama, teatral vurgu ve müzik kullanma. Cümleler arasında iki saniye boşluk bırak. Her metni ayrı dosya olarak üret.",
     "clips": [
-      { "id": "settle", "text": "Rahat bir pozisyon bul. Başının ve omuzlarının ağırlığını bulunduğun yere bırak. Şu an bir şeyi tamamlaman gerekmiyor." },
-      { "id": "release", "text": "Çeneni ve ellerini gevşet. Nefesini değiştirmeye çalışmadan, gelip gitmesini fark et. Bedenindeki ağırlığa biraz daha yer aç." },
-      { "id": "let-go", "text": "Aklına bir düşünce gelirse onunla uğraşman gerekmiyor. Geçip gitmesine izin ver. Dikkatini yeniden bedeninin temas ettiği yüzeye getir." }
+      { "id": "settle", "atSec": 0, "text": "Rahat bir pozisyon bul. Başının ve omuzlarının ağırlığını bulunduğun yere bırak. Yastığın, yatağın ya da oturduğun yerin seni taşıdığını fark et. İstersen gözlerini kapatabilirsin. Şu an bir şeyi tamamlaman gerekmiyor. Günün geri kalanını çözmeye çalışmadan, birkaç dakika burada kalabilirsin. Nefesini derinleştirmeye uğraşma. Nasıl geliyorsa öyle gelsin. Omuzlarının biraz daha serbest kaldığını fark edebilirsin. Bulunduğun pozisyon rahat değilse, küçük bir hareketle kendine yer aç. Sonra yeniden bedeninin ağırlığına dön." },
+      { "id": "release", "atSec": 120, "text": "Dikkatini yüzüne getir. Alnını, gözlerinin çevresini ve çeneni fark et. Bir yeri özellikle gevşetmek zorunda değilsin. Yalnızca gereksiz bir sıkılık varsa, biraz yumuşamasına izin verebilirsin. Ellerini ve parmaklarını serbest bırak. Kollarının, sırtının ve bacaklarının temas ettiği yüzeyi hisset. Nefes alırken bedeninde küçük bir hareket olabilir. Nefes verirken bu hareketin kendiliğinden durulmasını izle. Uyumayı başarmaya çalışman gerekmiyor. Şimdilik yalnızca dinlenmek yeterli." },
+      { "id": "let-go", "atSec": 300, "text": "Aklına bir düşünce geldiyse onun peşinden gitmen gerekmiyor. Onu uzaklaştırmaya çalışmana da gerek yok. Bir süre burada olduğunu fark edip geçmesine izin verebilirsin. Dikkatin yeniden bir şeye takılırsa, bedeninin bulunduğun yerle temasına dön. Başının, sırtının ve ellerinin ağırlığını fark et. Nefesinin ritmini kontrol etmeden dinlenmeye devam et. Bundan sonraki süreyi doldurman gerekmiyor. Geriye kalan sesler kendi halinde sürerken, sen rahat bulduğun pozisyonda kalabilirsin." }
     ]
   },
   "focus": {
@@ -14,9 +14,9 @@
     "nameEn": "Focus",
     "direction": "Türkçe. Sakin, açık ve uyanık bir ton kullan. Uyku telkini, fısıltı, coşkulu motivasyon, müzik ve efekt kullanma. Cümleler arasında bir saniye boşluk bırak. Her metni ayrı dosya olarak üret.",
     "clips": [
-      { "id": "begin", "text": "Önündeki işten küçük ve belirli bir adım seç. Gereksiz pencereleri kapat. Bu süreyi yalnızca seçtiğin adıma ayır." },
-      { "id": "one-task", "text": "Şu anda yaptığın tek işe dön. Başka bir şey aklına geldiyse kısaca not alıp bırak. Önündeki adımı sürdür." },
-      { "id": "return", "text": "Dikkatinin dağıldığını fark etmen yeterli. Nerede kaldığına bak. Bir sonraki küçük adımla devam et." }
+      { "id": "begin", "atSec": 0, "text": "Önündeki işten küçük ve belirli bir adım seç. Bu süre içinde neyi ilerletmek istediğini kendine açıkça söyle. Her şeyi bitirmeyi hedeflemek yerine, başlayabileceğin bir parçayı belirle. Gereksiz pencereleri kapat ve ihtiyaç duymadığın bildirimleri bir kenara bırak. Kullanacağın malzemeler elinin altında olsun. Hazır olduğunda ilk küçük adımı yap. Sonucun nasıl olacağını şimdiden değerlendirmen gerekmiyor. Önce işe temas et. Sonra bir sonraki adımla devam et." },
+      { "id": "one-task", "atSec": 480, "text": "Kısa bir an için şu anda ne yaptığını fark et. Seçtiğin iş üzerinde misin, yoksa başka bir şeye mi yöneldin? Dikkatin dağıldıysa bunu bir değerlendirmeye dönüştürmeden, kaldığın yere bak. Aklına gelen başka bir iş varsa kısaca not alıp sonraya bırakabilirsin. Aynı anda hepsini taşımana gerek yok. Şimdi önündeki tek adıma dön. Kusursuz bir tempo aramak yerine, sürdürebileceğin bir hızla ilerle." },
+      { "id": "return", "atSec": 1140, "text": "Bu çalışma aralığının sonuna yaklaşıyorsun. Yeni bir konu açmak yerine, üzerinde olduğun küçük parçayı toparla. Yarım kalan bir şey varsa nerede kaldığını birkaç sözcükle not et. Sonraki başlangıç için tek bir adım belirle. Yaptığın işin yeterli olup olmadığını şimdi tartmak zorunda değilsin. Gerekli dosyaları kaydet ve kalan süreyi sakin biçimde tamamla. Ardından kısa bir mola verebilirsin." }
     ]
   },
   "meditation": {
@@ -24,9 +24,9 @@
     "nameEn": "Meditation",
     "direction": "Türkçe. Sakin, sıcak ve doğal bir ses kullan. Emir veren, mistik veya dramatik bir ton kullanma. Nefesleri bilerek uzatma; cümleler arasında iki saniye boşluk bırak. Müzik ekleme. Her metni ayrı dosya olarak üret.",
     "clips": [
-      { "id": "arrive", "text": "Rahatça otur veya uzan. Bedeninin bulunduğun yerle temasını fark et. İstersen gözlerini kapatabilir ya da bakışını tek bir noktada dinlendirebilirsin." },
-      { "id": "observe", "text": "Nefesinin bedeninde en belirgin olduğu yeri fark et. Göğsünde, karnında ya da burnunun çevresinde olabilir. Nefesini zorlamadan izlemeyi dene." },
-      { "id": "return", "text": "Bir düşünceye veya sese yöneldiğinde bunu fark et. Kendini eleştirmeden, dikkatini yeniden nefesine getir. Her dönüş, bu çalışmanın bir parçası." }
+      { "id": "arrive", "atSec": 0, "text": "Rahatça otur veya uzan. Bedeninin bulunduğun yerle temasını fark et. Ayaklarında, sırtında ya da ellerinde belirgin bir temas hissi olabilir. İstersen gözlerini kapatabilir, istersen bakışını tek bir noktada dinlendirebilirsin. Burada doğru bir his üretmen gerekmiyor. Şimdi dikkatini nefesine getir. Nefesinin bedeninde en belirgin olduğu yeri fark et. Bu, burnunun çevresi, göğsün ya da karnın olabilir. Nefesi değiştirmeden, bir gelişini ve bir gidişini izle." },
+      { "id": "observe", "atSec": 180, "text": "Dikkatin bir düşünceye, sese ya da bedensel duyuma kaymış olabilir. Bunu fark ettiğinde, dikkatin yeniden buraya gelmiş demektir. Kendini eleştirmene gerek yok. Şimdi bir sonraki nefesin bedenindeki hareketini izle. Nefesler birbirinin aynısı olmak zorunda değil. Bazıları kısa, bazıları daha uzun hissedilebilir. Herhangi birini düzeltmeye çalışmadan, olduğu haliyle fark et. Dikkatin yeniden dağıldığında, aynı sakinlikle geri dönebilirsin." },
+      { "id": "return", "atSec": 540, "text": "Yavaşça nefesinden bedeninin tamamına doğru dikkatini genişlet. Bulunduğun yerle temasını ve çevrendeki sesleri fark et. İstersen parmaklarını veya omuzlarını küçük bir hareketle serbest bırak. Gözlerin kapalıysa, hazır olduğunda açabilirsin. Bu sürenin nasıl geçtiğine hemen karar vermen gerekmiyor. Bir sonraki işine geçmeden önce, bulunduğun yerde kısa bir an daha kal." }
     ]
   }
 }

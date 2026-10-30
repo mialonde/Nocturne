@@ -57,7 +57,7 @@ describe('full backup exchange', () => {
     envelope.preferences.ambienceTrackVolumes = { rain: 5, unknown: 1 }
     const restored = parseBackup(JSON.stringify(envelope), getBackupPreferences(current))
     expect(restored.preferences.audio.masterVolume).toBe(1)
-    expect(restored.preferences.features.voiceEverySec).toBe(30)
+    expect(restored.preferences.features).not.toHaveProperty('voiceEverySec')
     expect(restored.preferences.features.audioOnly).toBe(false)
     expect(restored.preferences.ambienceTrackVolumes).toEqual({ rain: 1 })
   })

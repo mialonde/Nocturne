@@ -11,8 +11,8 @@ export function FeatureController() {
   const playing = useNocturneStore((state) => state.audioStatus === 'playing')
   const [guide] = useState(() => new VoiceGuide(audio))
   useEffect(() => {
-    if (playing && features.voiceEnabled) {
-      guide.start(features.voiceProfile, features.voiceVolume, features.voiceEverySec, () => {
+    if (features.voiceEnabled) {
+      guide.configure(features.voiceProfile, () => {
         const state = useNocturneStore.getState()
         state.updateFeatures({ voiceEnabled: false })
         state.showToast(state.language === 'tr'
@@ -23,7 +23,17 @@ export function FeatureController() {
       guide.stop()
     }
     return () => guide.stop()
-  }, [guide, playing, features.voiceEnabled, features.voiceProfile, features.voiceVolume, features.voiceEverySec])
+  }, [guide, features.voiceEnabled, features.voiceProfile])
+  useEffect(() => {
+    guide.setVolume(features.voiceVolume)
+  }, [guide, features.voiceVolume])
+  useEffect(() => {
+    if (!features.voiceEnabled || !playing) {
+      guide.pause()
+      return
+    }
+    guide.resume()
+  }, [guide, playing, features.voiceEnabled, features.voiceProfile])
   useEffect(() => {
     if (!features.livingEnabled || !playing) { audio.setLivingFactors({}); return }
     let event = 0

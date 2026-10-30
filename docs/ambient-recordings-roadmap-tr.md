@@ -14,8 +14,10 @@ süreden ikinci kez düşülmüyor.
 
 | Kullanım | Kayıt ve kaynak | Lisans | Not |
 | --- | --- | --- | --- |
-| Fırtına | [Thunderstorm after hot summer day, part 03](https://commons.wikimedia.org/wiki/File:Thunderstorm_after_hot_summer_day_17_minutes_03_of_04.ogg) | Kamu malı | Ayrı bir gök gürültüsü kaydı; mevcut yağmur kaydını kesip kullanmaya gerek bırakmaz. |
-| Fan | [Table ventilator](https://commons.wikimedia.org/wiki/File:Table_ventilator.ogg) | Kamu malı | 42,6 sn; kayıtta fan açılıp kademesi değişiyor ve kapanıyor, sessiz döngü bölgesi seçilmeli. |
+| Fırtına | [Thunderstorm after hot summer day, part 03](https://commons.wikimedia.org/wiki/File:Thunderstorm_after_hot_summer_day_17_minutes_03_of_04.ogg) | Kamu malı | Commons kopyası 4:14; kaynak kayıt daha uzun. Ayrı gök gürültüsü içerir. |
+| Fan | [Table ventilator](https://commons.wikimedia.org/wiki/File:Table_ventilator.ogg) | Kamu malı | 42,6 sn; fan açılıp kademesi değişiyor ve kapanıyor. Temiz döngü için önce dinlenip geçişler kesilmeli. |
+| Gece böcekleri | [Cricket - Gryllidae Family](https://commons.wikimedia.org/wiki/File:Cricket_-_Gryllidae_Family.webm) | CC0 1.0 | 16,2 sn'lik video içindeki gerçek cırcır böceği kaydı. Ses ayrılıp dinlenmeli; döngü için kısa kalabilir. |
+| Alternatif gece böcekleri | [蝉鸣.ogg (ağustos böceği)](https://commons.wikimedia.org/wiki/File:%E8%9D%89%E9%B8%A3.ogg) | CC0 1.0 | 33,1 sn; gerçek ağustos böceği kaydı, cırcır böceği değil. Ayrı bir `night_insects` preset'ine daha uygun. |
 | Alternatif gece doğası | [Animal sounds from nature](https://archive.org/details/animalsounds1) | Kamu malı; U.S. Fish and Wildlife Service kaynağı | Kurbağa ve kuş kayıtları var; böcek sesi değil. Gerekirse yeni bir kurbağa/gece doğası preset'i olarak kullanılabilir. |
 
 Freesound'daki yağmur paketi ile Wikimedia Commons'taki bazı cırcır böceği

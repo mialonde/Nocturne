@@ -1,10 +1,10 @@
 # NOCTURNE — Türkçe seslendirme scripti
 
-Durum: **Üretime hazırlanmış metin; sesler henüz üretilmedi.**
+Durum: **Dokuz metin ve seans zamanlaması hazır; Gönül Filiz ile ilk örnek üretildi. Kalan klipler ve uygulamaya ses aktarımı bekliyor.**
 
-Bu belge, mevcut dokuz kısa taslağın daha ayrıntılı seslendirme sürümüdür.
-Mevcut dosya adları korunur. Uygulamanın çalışan metinlerini veya zamanlamasını
-kendiliğinden değiştirmez; üretim ve entegrasyon sonraki aşamada yapılacaktır.
+Bu belge, dokuz klibin üretim metnini ve tahmini süresini tanımlar. Dosya adları
+uygulamadaki kayıt adlarıyla eşleşir. Metinler ve başlangıç zamanları uygulamanın
+rehber kaynağına da eklendi; üretilmiş ses dosyaları henüz projeye alınmadı.
 
 ## Kayıt biçimi
 
@@ -44,8 +44,9 @@ başındaki/sonundaki boşluk üzerinden hesaplanan üretim tahminleridir.
 Gerçek kayıt çıktıktan sonra her klibin süresi ölçülüp zaman çizelgesi güncellenir.
 
 Uzun seansların büyük bölümü ambiyans ve sessizliktir. Anlatıcı sürekli konuşmaz.
-Bu plan, mevcut uygulamadaki genel tekrar aralığından farklı olarak her klibin
-belirtilen zamanda **bir kez** çalmasını öngörür; bu zamanlama henüz uygulanmadı.
+Her klip, kaynak JSON'daki `atSec` değerinde seans başına **bir kez** çalar.
+Duraklatma zaman çizelgesini dondurur; devam etme aynı yerden sürer. Önceki
+klibin sesi beklenenden uzun sürerse sıradaki klip bitişinden sonra başlar.
 
 ## 1. Uyku — 20 dakikalık seans
 
@@ -207,7 +208,7 @@ Bir sonraki işine geçmeden önce, bulunduğun yerde kısa bir an daha kal.
 4. Yalnızca gereken yerde boşluk ekle; seans içindeki dakikalarca sessizliği ses dosyasına gömme.
 5. Klipleri `sleep`, `focus`, `meditation` alt klasörlerine yukarıdaki adlarla yerleştir.
 6. Mevcut içe aktarma betiğiyle seviyeleri düzenle ve uygulama dosyalarını hazırla.
-7. Bu belgedeki seans zamanlamasını ayrı bir geliştirme olarak uygula. Sabit 90 saniyelik tekrarın bu planı uyguladığını varsayma.
+7. [x] Seans zamanlamasını `scripts/sources/guidance-scripts.json` içindeki `atSec` değerleriyle uygula; sabit tekrar aralığını kaldır.
 8. Yeniden başlatmada ilk klip bir kez çalsın; duraklatıp devam etmede giriş anonsu tekrarlanmasın.
 9. Profil değiştirilince eski ses ve bekleyen istekler iptal edilsin.
 10. Dinleyerek kontrol etmeden kullanılabilirlik işaretini açma.

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { guidanceAvailability, GUIDANCE_PROFILE_IDS, GUIDANCE_PROFILES, type GuidanceProfileId } from '../../config/guidance'
 import { useNocturneStore } from '../../store/useNocturneStore'
-import { NumberField, SelectField, Slider, Toggle } from '../components/controls'
+import { SelectField, Slider, Toggle } from '../components/controls'
 import { PanelSection } from '../panels/PanelSection'
 import { useFeatureCopy } from './copy'
 export function GuideControls() {
@@ -25,7 +25,5 @@ export function GuideControls() {
       onChange={(voiceEnabled) => update({ voiceEnabled })} />
     <Slider label={copy.volume} min={0} max={1} step={0.01} value={features.voiceVolume}
       onChange={(voiceVolume) => update({ voiceVolume })} format={(value) => `${Math.round(value * 100)}%`} />
-    <NumberField label={copy.voiceEvery} min={30} max={600} suffix="s" value={features.voiceEverySec}
-      onChange={(voiceEverySec) => update({ voiceEverySec })} />
   </PanelSection>
 }

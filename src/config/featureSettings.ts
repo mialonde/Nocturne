@@ -5,7 +5,6 @@ export interface FeatureSettings {
   voiceEnabled: boolean
   voiceProfile: GuidanceProfileId
   voiceVolume: number
-  voiceEverySec: number
   personalEnabled: boolean
   personalVolume: number
   personalPan: number
@@ -17,7 +16,7 @@ export interface FeatureSettings {
 
 export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
   audioOnly: false, keepAwake: true,
-  voiceEnabled: false, voiceProfile: 'meditation', voiceVolume: 0.5, voiceEverySec: 90,
+  voiceEnabled: false, voiceProfile: 'meditation', voiceVolume: 0.5,
   personalEnabled: false, personalVolume: 0.5, personalPan: 0,
   livingEnabled: false, livingSeed: 42, livingVariation: 0.3, livingEverySec: 45,
 }
@@ -31,7 +30,7 @@ export function sanitizeFeatures(value: unknown): FeatureSettings {
     if (typeof source[key] === 'boolean') result[key] = source[key]
   }
   const ranges = {
-    voiceVolume: [0, 1], voiceEverySec: [30, 600], personalVolume: [0, 1],
+    voiceVolume: [0, 1], personalVolume: [0, 1],
     personalPan: [-1, 1], livingSeed: [1, 2147483647], livingVariation: [0, 0.8], livingEverySec: [10, 180],
   } as const
   for (const key of Object.keys(ranges) as (keyof typeof ranges)[]) {

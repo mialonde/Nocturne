@@ -37,6 +37,7 @@ export class AudioEngine {
   private masterGain: GainNode | null = null
   private limiter: DynamicsCompressorNode | null = null
   private sleepFadeGain: GainNode | null = null
+  private ambientDuckingGain: GainNode | null = null
   private analyser: AnalyserNode | null = null
   private mediaDestination: MediaStreamAudioDestinationNode | null = null
   private binaural: BinauralAudioEngine | null = null
@@ -119,6 +120,7 @@ export class AudioEngine {
     const analyser = context.createAnalyser()
     const mediaDestination = context.createMediaStreamDestination()
     const ambientSessionGain = context.createGain()
+    const ambientDuckingGain = context.createGain()
 
     mixBus.gain.value = 1
     // No sound until an explicit user action ramps this open.
@@ -127,6 +129,7 @@ export class AudioEngine {
     sessionFadeGain.gain.value = 1
     sleepFadeGain.gain.value = 1
     ambientSessionGain.gain.value = 1
+    ambientDuckingGain.gain.value = 1
 
     limiter.threshold.value = -10
     limiter.knee.value = 18
@@ -163,6 +166,7 @@ export class AudioEngine {
     this.mixBus = mixBus
     this.sessionFadeGain = sessionFadeGain
     this.ambientSessionGain = ambientSessionGain
+    this.ambientDuckingGain = ambientDuckingGain
     this.transportGain = transportGain
     this.masterGain = masterGain
     this.limiter = limiter
@@ -174,7 +178,7 @@ export class AudioEngine {
     this.personalGain.gain.value = this.personalLevel
     this.personalPan.pan.value = this.personalPosition
     this.personalGain.connect(this.personalPan)
-    this.personalPan.connect(mixBus)
+    this.personalPan.connect(ambientDuckingGain)
     this.guidanceGain = context.createGain()
     this.guidanceGain.gain.value = 0
     this.guidanceGain.connect(mixBus)
@@ -194,9 +198,10 @@ export class AudioEngine {
       0,
     )
     this.applyLivingVolumes(0)
-    ambientSessionGain.connect(mixBus)
+    ambientSessionGain.connect(ambientDuckingGain)
+    ambientDuckingGain.connect(mixBus)
 
-    this.binaural = new BinauralAudioEngine(context, mixBus, {
+    this.binaural = new BinauralAudioEngine(context, ambientDuckingGain, {
       carrier: this.audioConfig.carrier,
       beat: this.audioConfig.beat,
       binauralVolume: this.audioConfig.binauralVolume,
@@ -361,21 +366,31 @@ export class AudioEngine {
     if (!this.context || !this.guidanceGain || !this.playing) return
     const source = this.context.createBufferSource()
     source.buffer = buffer
-    this.guidanceGain.gain.setValueAtTime(clamp(volume, 0, 1), this.context.currentTime)
+    const level = clamp(volume, 0, 1)
+    safeRamp(this.guidanceGain.gain, level, this.context.currentTime, 0.12)
+    this.setGuidanceDucking(level > 0.001)
     source.connect(this.guidanceGain)
     source.onended = () => {
       source.disconnect()
-      if (this.guidanceSource === source) this.guidanceSource = null
+      if (this.guidanceSource === source) {
+        this.guidanceSource = null
+        this.setGuidanceDucking(false)
+      }
     }
     source.start()
     this.guidanceSource = source
   }
 
   isGuidancePlaying(): boolean { return this.guidanceSource !== null }
+  private setGuidanceDucking(active: boolean): void {
+    if (!this.context || !this.ambientDuckingGain) return
+    safeRamp(this.ambientDuckingGain.gain, active ? 0.38 : 1, this.context.currentTime, active ? 0.28 : 1.1)
+  }
   stopGuidance(): void {
     this.guidanceSource?.stop()
     this.guidanceSource?.disconnect()
     this.guidanceSource = null
+    this.setGuidanceDucking(false)
   }
 
   configurePersonalAudio(enabled: boolean, volume: number, pan: number): void {
@@ -702,6 +717,7 @@ export class AudioEngine {
     this.transportGain?.disconnect()
     this.sessionFadeGain?.disconnect()
     this.ambientSessionGain?.disconnect()
+    this.ambientDuckingGain?.disconnect()
     this.mixBus?.disconnect()
     this.mediaDestination = null
     this.analyser = null
@@ -711,6 +727,7 @@ export class AudioEngine {
     this.transportGain = null
     this.sessionFadeGain = null
     this.ambientSessionGain = null
+    this.ambientDuckingGain = null
     this.mixBus = null
     this.initialized = false
     this.playing = false

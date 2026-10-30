@@ -2,16 +2,16 @@
 
 ## Türkçe kayıtlı rehberler
 
-Durum: **Planlandı; ses üretimi yapılmadı.**
+Durum: **Ses anlatıcısı seçildi; uygulama içi tek seferlik zamanlama hazırlandı.**
 
 - [x] Uyku, odak ve meditasyon için seslendirme metinlerini hazırla.
 - [x] Klip adlarını, tahmini konuşma sürelerini ve önerilen seans zamanlarını belirle.
-- [ ] Google AI Studio'da tek kliple Türkçe telaffuz, ses karakteri ve dışa aktarma denemesi yap.
-- [ ] Seçilen sağlayıcı ve sesin uygulamayla dağıtım koşullarını kaydet.
-- [ ] Onaylanan sesle dokuz klibi ayrı ayrı üret; müzik ve ambiyans ekleme.
+- [x] ElevenLabs'ta `sleep/settle` örneğini üret ve anlatıcı olarak Gönül Filiz'i seç (voice ID `xsGHrtxT5AdDzYXTQT0d`), model `eleven_v4`.
+- [ ] Aynı sesle kalan sekiz klibi ayrı üret; müzik ve ambiyans ekleme.
+- Aktif ElevenLabs akışı: `NOCTURNE — Türkçe Sesli Rehber`; son durum görünümünde sekiz isteğin altısı hazır, ikisi işleniyor.
 - [ ] Klipleri dinleyerek kontrol et; yanlış telaffuz, okunan yönetmen notları ve kesik sonları düzelt.
 - [ ] `npm run guidance:prepare -- <girdi-klasörü>` ile sesleri hazırla.
-- [ ] Her profil için tek seferlik başlangıç / hatırlatma / kapanış zamanlarını uygula; mevcut sabit aralıklı tekrar davranışından ayrı tut.
+- [x] Her profil için seansa yayılmış tek seferlik başlangıç / hatırlatma / kapanış zamanlarını uygula; konuşma klipleri çakışmaz ve duraklatıp devam etmek zaman çizelgesini sıfırlamaz.
 - [ ] Duraklatma, devam etme, profil değiştirme, uyku zamanlayıcısı, offline kullanım ve video/WAV kaydını gerçek tarayıcıda doğrula.
 - [ ] Ses dosyaları hazır olduktan sonra ilgili profilleri kullanılabilir olarak işaretle.
 
@@ -29,7 +29,7 @@ Durum: **6 kayıt mevcut ve yeniden işlendi; 13 seçenek hâlâ sentezleniyor.*
 - [x] Kamu malı/CC0 kaynak politikasını koru; ElevenLabs çıktısını ayrı ses kütüphanesi olarak dağıtma.
 - [ ] İndirme erişimi açıldığında kamu malı ayrı gök gürültüsü kaydını `storm` için ekle.
 - [ ] Uygun kamu malı fan kaydını `fan` ve/veya `ventilation` için dinleyip, açma-kapama bölümlerini keserek döngüyü hazırla.
-- [ ] `night_crickets` için lisansı kamu malı/CC0 olmayan adayları kullanma; doğrulanmış CC0 kayıt bul veya ayrı yeni bir gece-kurbağa ambiyansı oluştur.
+- [ ] `night_crickets` için lisansı doğrulanmış 16,2 sn CC0 cırcır böceği adayını indir, dinle ve döngüye uygunluğunu kontrol et.
 - [ ] Beyaz/pembe/kahverengi gürültü ve drone/pad/tone seçeneklerini fiziksel kayıtla eşleştirmenin anlam kaybı yaratıp yaratmadığını değerlendir; gerekirse bunları sentetik ses tasarımı olarak açıkça etiketle.
 - [ ] Yeni her kaydı kaynak sayfası, lisans, SHA-1, trim ve süre bilgisiyle provenance kilidine ekle; mevcut `samples:fetch` ve `samples:prepare` hattıyla döngü, seviye ve build kontrollerini geçir.
 
